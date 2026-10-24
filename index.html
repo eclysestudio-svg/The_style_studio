@@ -1,0 +1,2300 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Style Studio — Fashion Intelligence</title>
+    <meta name="description" content="The Style Studio is your ultimate fashion intelligence canvas. Explore 70+ distinct aesthetics, build outfits, and master any style from around the world.">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts: Caveat (script) + Lato (body) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Lato:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400&display=swap" rel="stylesheet">
+
+    <!-- GSAP & SplitType -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/split-type"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        script: ['"Caveat"', 'cursive'],
+                        sans: ['"Lato"', 'sans-serif'],
+                    },
+                    colors: {
+                        linen:     '#F5F0E8',
+                        parchment: '#FDFAF4',
+                        craftRed:  '#C0392B',
+                        redLight:  '#E74C3C',
+                        warmBrown: '#2C2417',
+                        taupe:     '#7A6652',
+                        thread:    '#8B1A1A',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* ── BASE ── */
+        *, *::before, *::after { box-sizing: border-box; cursor: none !important; }
+        body {
+            margin: 0; padding: 0;
+            font-family: 'Lato', sans-serif;
+            background-color: #F5F0E8;
+            color: #2C2417;
+            overflow-x: hidden;
+        }
+
+        /* ── LINEN TEXTURE ── */
+        body::before {
+            content: '';
+            position: fixed; inset: 0;
+            background-image:
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Crect width='4' height='4' fill='%23F5F0E8'/%3E%3Crect x='0' y='0' width='1' height='1' fill='%23E8E2D4' opacity='0.4'/%3E%3Crect x='2' y='2' width='1' height='1' fill='%23E8E2D4' opacity='0.4'/%3E%3Crect x='1' y='3' width='1' height='1' fill='%23DDD5C5' opacity='0.2'/%3E%3C/svg%3E");
+            background-repeat: repeat;
+            background-size: 4px 4px;
+            pointer-events: none;
+            z-index: 0;
+        }
+        body > * { position: relative; z-index: 1; }
+
+        /* ── STITCH CARD ── */
+        .stitch-card {
+            background: #FDFAF4;
+            border: 2px dashed rgba(192, 57, 43, 0.25);
+            border-radius: 4px;
+            transition: border-color 0.35s ease, box-shadow 0.35s ease;
+            position: relative;
+        }
+        .stitch-card:hover {
+            border-color: rgba(192, 57, 43, 0.6);
+            box-shadow: 4px 4px 0 rgba(192, 57, 43, 0.15);
+        }
+        .stitch-card::before {
+            content: '✦';
+            position: absolute;
+            top: 8px; left: 10px;
+            font-size: 10px;
+            color: rgba(192,57,43,0.3);
+            line-height: 1;
+        }
+
+        /* ── CRAFT BUTTON ── */
+        .craft-btn {
+            background: #C0392B;
+            color: #fff;
+            border: none;
+            border-radius: 50px;
+            font-family: 'Lato', sans-serif;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            transition: background 0.25s ease, box-shadow 0.25s ease, opacity 0.2s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        .craft-btn:hover {
+            background: #E74C3C;
+            box-shadow: 0 6px 20px rgba(192,57,43,0.35);
+        }
+        .craft-btn:active { transform: scale(0.98); }
+        .craft-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        /* ── OUTLINE BUTTON ── */
+        .craft-btn-outline {
+            background: transparent;
+            color: #C0392B;
+            border: 2px solid #C0392B;
+            border-radius: 50px;
+            font-family: 'Lato', sans-serif;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            font-size: 0.7rem;
+            transition: background 0.25s ease, color 0.25s ease;
+            cursor: pointer;
+        }
+        .craft-btn-outline:hover {
+            background: #C0392B;
+            color: #fff;
+        }
+
+        /* ── CLEAN INPUT ── */
+        .craft-input {
+            background: #FDFAF4;
+            border: 2px dashed rgba(192,57,43,0.3);
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            font-family: 'Lato', sans-serif;
+        }
+        .craft-input:focus {
+            outline: none;
+            border-color: #C0392B;
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(192,57,43,0.08);
+        }
+
+        /* ── STITCH DIVIDER ── */
+        .stitch-divider {
+            border: none;
+            height: 2px;
+            background-image: linear-gradient(to right, rgba(192,57,43,0.35) 50%, transparent 50%);
+            background-size: 14px 2px;
+            background-repeat: repeat-x;
+            margin: 0;
+            position: relative;
+            transition: background-image 0.2s ease, box-shadow 0.2s ease;
+        }
+        .stitch-divider::after {
+            content: '';
+            position: absolute;
+            top: -20px; bottom: -20px; left: 0; right: 0;
+            z-index: 10;
+        }
+        .stitch-divider.cut-active {
+            background-image: linear-gradient(to right, rgba(192,57,43,0.8) 50%, transparent 50%);
+            box-shadow: 0 0 8px rgba(192,57,43,0.3);
+        }
+
+        /* ── SCROLLBAR ── */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: #F5F0E8; }
+        ::-webkit-scrollbar-thumb { background: #C0392B; border-radius: 10px; }
+
+        /* ── CATEGORY TAG ── */
+        .cat-tag {
+            display: inline-block;
+            padding: 5px 14px;
+            border: 1.5px solid rgba(192,57,43,0.3);
+            border-radius: 50px;
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #7A6652;
+            background: #FDFAF4;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .cat-tag:hover, .cat-tag.active {
+            background: #C0392B;
+            color: #fff;
+            border-color: #C0392B;
+        }
+
+        /* ── STYLE CHIP ── */
+        .style-chip {
+            padding: 4px 12px;
+            border-radius: 50px;
+            border: 1.5px solid rgba(192,57,43,0.25);
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: #7A6652;
+            background: #FDFAF4;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+        .style-chip:hover {
+            border-color: #C0392B;
+            color: #C0392B;
+            transform: translateY(-1px);
+        }
+
+        /* ── SKETCH ICON FLOAT ── */
+        .sketch-float {
+            position: absolute;
+            opacity: 0.18;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        /* ── NAV ── */
+        .site-nav {
+            position: fixed; top: 0; left: 0; right: 0;
+            z-index: 100;
+            padding: 14px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(245, 240, 232, 0.92);
+            backdrop-filter: blur(8px);
+            border-bottom: 2px dashed rgba(192,57,43,0.2);
+        }
+
+        /* ── CATEGORY CARD ── */
+        .cat-section-card {
+            background: #FDFAF4;
+            border: 2px dashed rgba(192,57,43,0.2);
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+        .cat-section-card:hover {
+            border-color: rgba(192,57,43,0.5);
+            box-shadow: 3px 3px 0 rgba(192,57,43,0.1);
+        }
+
+        /* ── RESULT ITEM ── */
+        .result-outfit-card {
+            background: #FDFAF4;
+            border: 2px dashed rgba(192,57,43,0.2);
+            border-radius: 8px;
+            padding: 14px;
+            transition: all 0.3s ease;
+            display: flex;
+            gap: 14px;
+            align-items: center;
+        }
+        .result-outfit-card:hover {
+            border-color: rgba(192,57,43,0.5);
+            box-shadow: 3px 3px 0 rgba(192,57,43,0.12);
+            transform: translateY(-2px);
+        }
+
+        /* ── ENCYCLOPEDIA DETAIL ── */
+        #encyclopedia-detail {
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        /* ── LOADING SHIMMER ── */
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        .shimmer {
+            background: linear-gradient(90deg, #ede8e0 25%, #f5f0e8 50%, #ede8e0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.4s infinite;
+        }
+
+        /* ── STITCH PATH ANIMATION ── */
+        @keyframes dashDraw {
+            to { stroke-dashoffset: 0; }
+        }
+        .stitch-path {
+            stroke-dasharray: 8 6;
+            stroke-dashoffset: 200;
+            animation: dashDraw 2s ease forwards;
+        }
+
+        /* Loading bar */
+        #loading-bar-fill {
+            background: repeating-linear-gradient(
+                90deg,
+                #C0392B 0px, #C0392B 12px,
+                #E74C3C 12px, #E74C3C 20px
+            );
+            background-size: 200% 100%;
+            animation: barSlide 1s linear infinite;
+        }
+        @keyframes barSlide {
+            0% { background-position: 0 0; }
+            100% { background-position: 40px 0; }
+        }
+
+        /* Pill quick-prompts */
+        .quick-pill {
+            padding: 5px 14px;
+            border-radius: 50px;
+            border: 1.5px dashed rgba(192,57,43,0.4);
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.07em;
+            text-transform: uppercase;
+            color: #7A6652;
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .quick-pill:hover {
+            background: #C0392B;
+            color: #fff;
+            border-style: solid;
+            border-color: #C0392B;
+        }
+
+        /* Mode tab */
+        .mode-tab {
+            flex: 1;
+            padding: 10px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            border-radius: 50px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: none;
+            font-family: 'Lato', sans-serif;
+        }
+        .mode-tab.active {
+            background: #C0392B;
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(192,57,43,0.25);
+        }
+        .mode-tab:not(.active) {
+            background: transparent;
+            color: #7A6652;
+        }
+        .mode-tab:not(.active):hover { color: #C0392B; }
+    </style>
+</head>
+<body>
+
+    <!-- ══════════════════════════════════════════════
+         CUSTOM CURSOR
+    ══════════════════════════════════════════════ -->
+    <svg id="custom-cursor" viewBox="0 0 32 32" width="32" height="32" style="position:fixed; top:0; left:0; pointer-events:none; z-index:99999;">
+        <g id="scissor-top">
+            <path d="M 16 16 L 4 4 C 10 2 14 8 16 16 Z" fill="#C0392B"/>
+            <line x1="16" y1="16" x2="22" y2="22" stroke="#C0392B" stroke-width="2"/>
+            <circle cx="25" cy="25" r="4" stroke="#C0392B" stroke-width="2" fill="none"/>
+        </g>
+        <g id="scissor-bottom">
+            <path d="M 16 16 L 4 4 C 2 10 8 14 16 16 Z" fill="#C0392B"/>
+            <line x1="16" y1="16" x2="22" y2="10" stroke="#C0392B" stroke-width="2"/>
+            <circle cx="25" cy="7" r="4" stroke="#C0392B" stroke-width="2" fill="none"/>
+        </g>
+        <circle cx="16" cy="16" r="1.5" fill="#2C2417"/>
+    </svg>
+
+    <!-- ══════════════════════════════════════════════
+         SCROLL PROGRESS THREAD
+    ══════════════════════════════════════════════ -->
+    <div id="scroll-thread-track" class="fixed top-0 right-3 w-[2px] h-full z-[90] pointer-events-none mix-blend-multiply" style="background: repeating-linear-gradient(to bottom, rgba(192,57,43,0.15) 0px, rgba(192,57,43,0.15) 8px, transparent 8px, transparent 16px);">
+        <div id="scroll-thread-fill" class="absolute top-0 left-0 w-full h-0" style="background: repeating-linear-gradient(to bottom, #C0392B 0px, #C0392B 8px, transparent 8px, transparent 16px);">
+            <svg id="scroll-needle" width="12" height="24" viewBox="0 0 12 24" class="absolute left-1/2 -translate-x-1/2" style="bottom:-24px;">
+                <path d="M 6 0 L 10 4 L 6 24 L 2 4 Z" fill="none" stroke="#C0392B" stroke-width="1.5"/>
+                <circle cx="6" cy="4" r="1.5" fill="#F5F0E8" stroke="#C0392B" stroke-width="1"/>
+            </svg>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════
+         NAVIGATION
+    ══════════════════════════════════════════════ -->
+    <nav class="site-nav" id="site-nav">
+        <a href="#" class="flex items-center gap-2 no-underline">
+            <!-- Needle & thread icon -->
+            <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="14" cy="14" r="13" fill="#FDFAF4" stroke="#C0392B" stroke-width="1.5" stroke-dasharray="4 3"/>
+                <text x="14" y="19" text-anchor="middle" font-family="Caveat" font-size="14" fill="#C0392B" font-weight="700">S</text>
+            </svg>
+            <span class="font-script text-2xl font-bold text-warmBrown">The Style Studio</span>
+        </a>
+
+        <div class="hidden md:flex items-center gap-8">
+            <a href="#studio" class="font-sans text-xs font-700 uppercase tracking-widest text-taupe hover:text-craftRed transition-colors" style="font-weight:700;letter-spacing:0.1em">The Studio</a>
+            <a href="#browse" class="font-sans text-xs font-700 uppercase tracking-widest text-taupe hover:text-craftRed transition-colors" style="font-weight:700;letter-spacing:0.1em">Browse Styles</a>
+            <a href="#encyclopedia" class="font-sans text-xs font-700 uppercase tracking-widest text-taupe hover:text-craftRed transition-colors" style="font-weight:700;letter-spacing:0.1em">Encyclopedia</a>
+        </div>
+    </nav>
+
+    <!-- ══════════════════════════════════════════════
+         HERO
+    ══════════════════════════════════════════════ -->
+    <section id="hero-section" class="relative min-h-screen flex flex-col items-center justify-center px-6 text-center pt-20 overflow-hidden">
+
+        <!-- Sketch floating decorators -->
+        <!-- Scissors top-left -->
+        <div class="sketch-float" style="top:10%; left:6%; transform:rotate(-25deg);">
+            <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="13" cy="13" r="9" stroke="#2C2417" stroke-width="1.5" fill="none"/>
+                <circle cx="51" cy="13" r="9" stroke="#2C2417" stroke-width="1.5" fill="none"/>
+                <circle cx="13" cy="13" r="4" fill="#2C2417" opacity="0.15"/>
+                <circle cx="51" cy="13" r="4" fill="#2C2417" opacity="0.15"/>
+                <line x1="20" y1="19" x2="48" y2="50" stroke="#2C2417" stroke-width="1.5" stroke-linecap="round"/>
+                <line x1="44" y1="19" x2="20" y2="50" stroke="#2C2417" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+        </div>
+
+        <!-- Thimble top-center -->
+        <div class="sketch-float" style="top:8%; left:50%; transform:translateX(-50%);">
+            <svg width="44" height="52" viewBox="0 0 44 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <ellipse cx="22" cy="48" rx="18" ry="4" stroke="#2C2417" stroke-width="1.5"/>
+                <path d="M4 48 Q4 18 22 6 Q40 18 40 48" stroke="#2C2417" stroke-width="1.5" fill="none"/>
+                <circle cx="14" cy="26" r="1.5" fill="#2C2417" opacity="0.5"/>
+                <circle cx="22" cy="18" r="1.5" fill="#2C2417" opacity="0.5"/>
+                <circle cx="30" cy="26" r="1.5" fill="#2C2417" opacity="0.5"/>
+                <circle cx="18" cy="34" r="1.5" fill="#2C2417" opacity="0.5"/>
+                <circle cx="26" cy="34" r="1.5" fill="#2C2417" opacity="0.5"/>
+            </svg>
+        </div>
+
+        <!-- Sewing machine top-right -->
+        <div class="sketch-float" style="top:8%; right:5%;">
+            <svg width="80" height="64" viewBox="0 0 80 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="10" y="20" width="60" height="34" rx="4" stroke="#2C2417" stroke-width="1.5" fill="none"/>
+                <rect x="20" y="12" width="30" height="12" rx="2" stroke="#2C2417" stroke-width="1.5" fill="none"/>
+                <circle cx="60" cy="30" r="8" stroke="#2C2417" stroke-width="1.5" fill="none"/>
+                <circle cx="60" cy="30" r="3" fill="#2C2417" opacity="0.2"/>
+                <line x1="30" y1="38" x2="30" y2="54" stroke="#2C2417" stroke-width="1.5" stroke-linecap="round"/>
+                <line x1="10" y1="54" x2="70" y2="54" stroke="#2C2417" stroke-width="1.5"/>
+            </svg>
+        </div>
+
+        <!-- Thread spool bottom-left -->
+        <div class="sketch-float" style="bottom:18%; left:8%;">
+            <svg width="52" height="60" viewBox="0 0 52 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <ellipse cx="26" cy="10" rx="20" ry="8" stroke="#2C2417" stroke-width="1.5" fill="none"/>
+                <ellipse cx="26" cy="50" rx="20" ry="8" stroke="#2C2417" stroke-width="1.5" fill="none"/>
+                <line x1="6" y1="10" x2="6" y2="50" stroke="#2C2417" stroke-width="1.5"/>
+                <line x1="46" y1="10" x2="46" y2="50" stroke="#2C2417" stroke-width="1.5"/>
+                <ellipse cx="26" cy="30" rx="14" ry="20" stroke="#2C2417" stroke-width="1" fill="none" opacity="0.3"/>
+            </svg>
+        </div>
+
+        <!-- Buttons cluster bottom-right -->
+        <div class="sketch-float" style="bottom:15%; right:7%;">
+            <svg width="64" height="48" viewBox="0 0 64 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="16" cy="24" r="14" stroke="#2C2417" stroke-width="1.5" fill="none"/>
+                <circle cx="16" cy="24" r="8" stroke="#2C2417" stroke-width="1" fill="none" opacity="0.4"/>
+                <circle cx="12" cy="20" r="1.5" fill="#2C2417" opacity="0.5"/>
+                <circle cx="20" cy="20" r="1.5" fill="#2C2417" opacity="0.5"/>
+                <circle cx="12" cy="28" r="1.5" fill="#2C2417" opacity="0.5"/>
+                <circle cx="20" cy="28" r="1.5" fill="#2C2417" opacity="0.5"/>
+                <circle cx="46" cy="14" r="10" stroke="#2C2417" stroke-width="1.5" fill="none"/>
+                <circle cx="43" cy="11" r="1" fill="#2C2417" opacity="0.5"/>
+                <circle cx="49" cy="11" r="1" fill="#2C2417" opacity="0.5"/>
+                <circle cx="46" cy="17" r="1" fill="#2C2417" opacity="0.5"/>
+            </svg>
+        </div>
+
+        <!-- Pin cushion bottom-center -->
+        <div class="sketch-float" style="bottom:10%; left:48%;">
+            <svg width="52" height="44" viewBox="0 0 52 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <ellipse cx="26" cy="32" rx="24" ry="10" stroke="#2C2417" stroke-width="1.5" fill="none"/>
+                <path d="M2 32 Q2 14 26 14 Q50 14 50 32" stroke="#2C2417" stroke-width="1.5" fill="none"/>
+                <line x1="20" y1="14" x2="16" y2="4" stroke="#2C2417" stroke-width="1" stroke-linecap="round"/>
+                <line x1="26" y1="14" x2="26" y2="2" stroke="#2C2417" stroke-width="1" stroke-linecap="round"/>
+                <line x1="32" y1="14" x2="36" y2="4" stroke="#2C2417" stroke-width="1" stroke-linecap="round"/>
+                <circle cx="16" cy="4" r="2" fill="#C0392B" opacity="0.7"/>
+                <circle cx="26" cy="2" r="2" fill="#C0392B" opacity="0.7"/>
+                <circle cx="36" cy="4" r="2" fill="#C0392B" opacity="0.7"/>
+            </svg>
+        </div>
+
+        <!-- Red dashed loop SVG (like the image) -->
+        <svg class="absolute inset-0 w-full h-full pointer-events-none opacity-20" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+            <path d="M150 350 Q300 120 600 100 Q900 80 1050 350 Q1100 500 900 580 Q700 650 600 600 Q400 650 200 560 Q80 490 150 350Z"
+                fill="none" stroke="#C0392B" stroke-width="2" stroke-dasharray="12 8"
+                class="stitch-path"/>
+        </svg>
+
+        <!-- Hero Text -->
+        <div class="relative z-10 max-w-3xl mx-auto hero-content-group">
+            <div class="inline-block px-4 py-1 border border-dashed border-craftRed/40 rounded-full text-xs font-bold uppercase tracking-widest text-craftRed mb-6 bg-parchment/80" style="letter-spacing:0.15em;">
+                ✦ &nbsp;70+ Aesthetics &nbsp;✦
+            </div>
+
+            <h1 class="font-script text-6xl sm:text-7xl md:text-8xl text-warmBrown leading-tight mb-2" id="hero-title">
+                The Style Studio
+            </h1>
+
+            <p class="font-script text-2xl md:text-3xl text-craftRed mb-8 italic">
+                — your personal fashion atlas
+            </p>
+
+            <p class="font-sans text-base text-taupe max-w-xl mx-auto leading-relaxed mb-10" style="font-weight:300;">
+                Explore over 70 distinct fashion aesthetics from every corner of the world and internet. Input a vibe, get a full outfit blueprint.
+            </p>
+
+            <div class="flex flex-wrap gap-4 justify-center">
+                <a href="#studio" class="craft-btn px-8 py-3">
+                    Open The Studio
+                </a>
+                <a href="#browse" class="craft-btn-outline px-8 py-3">
+                    Browse All Styles
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Giant Scissors for Scroll Snipping -->
+    <div id="hero-scissors-track" class="relative w-full h-0 pointer-events-none z-50">
+        <svg id="giant-scissors" viewBox="0 0 32 32" width="160" height="160" class="absolute" style="top: -80px; left: -160px; transform: rotate(135deg);">
+            <g id="giant-scissor-top" style="transform-origin: 16px 16px;">
+                <path d="M 16 16 L 4 4 C 10 2 14 8 16 16 Z" fill="#C0392B"/>
+                <line x1="16" y1="16" x2="22" y2="22" stroke="#C0392B" stroke-width="2"/>
+                <circle cx="25" cy="25" r="4" stroke="#C0392B" stroke-width="2" fill="none"/>
+            </g>
+            <g id="giant-scissor-bottom" style="transform-origin: 16px 16px;">
+                <path d="M 16 16 L 4 4 C 2 10 8 14 16 16 Z" fill="#C0392B"/>
+                <line x1="16" y1="16" x2="22" y2="10" stroke="#C0392B" stroke-width="2"/>
+                <circle cx="25" cy="7" r="4" stroke="#C0392B" stroke-width="2" fill="none"/>
+            </g>
+            <circle cx="16" cy="16" r="2.5" fill="#2C2417"/>
+        </svg>
+    </div>
+
+    <hr class="stitch-divider mx-8">
+
+    <!-- ══════════════════════════════════════════════
+         THE STUDIO
+    ══════════════════════════════════════════════ -->
+    <section id="studio" class="py-20 px-6 md:px-12 relative overflow-hidden">
+        <!-- Sketch float: Hanger -->
+        <div class="sketch-float" style="top:5%; left:3%; transform:rotate(15deg);">
+            <svg width="64" height="40" viewBox="0 0 64 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M 32 16 C 32 16 32 4 26 4 C 22 4 22 10 26 12 C 30 14 32 16 32 16 L 4 32 C 2 33 2 36 6 36 L 58 36 C 62 36 62 33 60 32 Z" stroke="#2C2417" stroke-width="1.5" stroke-linejoin="round"/>
+            </svg>
+        </div>
+        <!-- Sketch float: Tape Measure -->
+        <div class="sketch-float" style="bottom:10%; right:4%; transform:rotate(-10deg);">
+            <svg width="80" height="40" viewBox="0 0 80 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M 10 20 Q 30 5 50 20 T 70 20" stroke="#2C2417" stroke-width="1.5" fill="none"/>
+                <path d="M 10 28 Q 30 13 50 28 T 70 28" stroke="#2C2417" stroke-width="1.5" fill="none"/>
+                <line x1="10" y1="20" x2="10" y2="28" stroke="#2C2417" stroke-width="1.5"/>
+                <line x1="70" y1="20" x2="70" y2="28" stroke="#2C2417" stroke-width="1.5"/>
+                <line x1="20" y1="14" x2="20" y2="18" stroke="#2C2417" stroke-width="1.5"/>
+                <line x1="30" y1="10" x2="30" y2="14" stroke="#2C2417" stroke-width="1.5"/>
+                <line x1="40" y1="12" x2="40" y2="16" stroke="#2C2417" stroke-width="1.5"/>
+                <line x1="50" y1="20" x2="50" y2="24" stroke="#2C2417" stroke-width="1.5"/>
+            </svg>
+        </div>
+        <div class="max-w-6xl mx-auto">
+
+            <!-- Section header -->
+            <div class="mb-10 flex items-end justify-between">
+                <div>
+                    <p class="text-xs font-bold uppercase tracking-widest text-craftRed mb-1" style="letter-spacing:0.2em;">Fashion Engine</p>
+                    <h2 class="font-script text-5xl text-warmBrown">The Studio</h2>
+                </div>
+                <div class="hidden md:block text-right">
+                    <p class="text-xs text-taupe font-sans" style="font-weight:300;">Describe a vibe or upload a reference image</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+                <!-- ── LEFT: Input ── -->
+                <div class="lg:col-span-5 stitch-card p-8 relative">
+                    <!-- Decorative corner stitch -->
+                    <div class="absolute top-3 right-3 w-4 h-4 border-t-2 border-r-2 border-dashed border-craftRed/30 rounded-tr"></div>
+                    <div class="absolute bottom-3 left-3 w-4 h-4 border-b-2 border-l-2 border-dashed border-craftRed/30 rounded-bl"></div>
+
+                    <!-- Gender Toggle -->
+                    <div class="mb-5 flex gap-3 items-center">
+                        <span class="text-xs font-bold uppercase tracking-widest text-taupe" style="letter-spacing:0.12em;">For:</span>
+                        <select id="gender-toggle" class="bg-transparent border-b-2 border-dashed border-craftRed/40 text-xs font-bold uppercase tracking-wider text-craftRed focus:outline-none pb-1 cursor-pointer font-sans">
+                            <option value="Female">Her</option>
+                            <option value="Male">Him</option>
+                            <option value="Androgynous" selected>Anyone</option>
+                        </select>
+                    </div>
+
+                    <!-- Mode Switcher -->
+                    <div class="flex gap-2 mb-6 bg-linen/60 p-1.5 rounded-full border border-dashed border-craftRed/20">
+                        <button onclick="setStudioMode('text')" id="mode-text-btn" class="mode-tab active" style="border-radius:50px;">✏️ Describe</button>
+                        <button onclick="setStudioMode('vision')" id="mode-vision-btn" class="mode-tab" style="border-radius:50px;">📷 Upload</button>
+                    </div>
+
+                    <!-- Text Mode -->
+                    <div id="panel-mode-text" class="space-y-5">
+                        <textarea id="style-prompt-input" rows="5"
+                            class="w-full craft-input p-4 text-warmBrown placeholder-taupe/50 resize-none text-base"
+                            style="font-family:'Lato',sans-serif; font-weight:300; line-height:1.7;"
+                            placeholder="Describe a vibe... 'Tokyo street in winter', 'dark academia', 'coastal summer', '90s grunge'..."></textarea>
+
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-widest text-taupe block mb-2" style="letter-spacing:0.12em;">Quick picks</span>
+                            <div class="flex flex-wrap gap-2">
+                                <button onclick="setQuickPrompt('Quiet Luxury')" class="quick-pill">✦ Quiet Luxury</button>
+                                <button onclick="setQuickPrompt('Dark Academia')" class="quick-pill">📚 Academia</button>
+                                <button onclick="setQuickPrompt('Gorpcore outdoor')" class="quick-pill">⛰️ Gorpcore</button>
+                                <button onclick="setQuickPrompt('Harajuku street fashion')" class="quick-pill">🌸 Harajuku</button>
+                                <button onclick="setQuickPrompt('Cottagecore pastoral')" class="quick-pill">🌿 Cottagecore</button>
+                                <button onclick="setQuickPrompt('Cyberpunk neon')" class="quick-pill">⚡ Cyberpunk</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Vision Mode -->
+                    <div id="panel-mode-vision" class="space-y-5 hidden">
+                        <div id="drag-drop-zone" class="craft-input p-8 flex flex-col items-center justify-center cursor-pointer min-h-[220px] relative overflow-hidden group border-dashed">
+                            <input type="file" id="image-file-input" class="hidden" accept="image/*" onchange="handleImageFileSelect(event)">
+                            <div id="upload-placeholder" class="text-center">
+                                <div class="font-script text-4xl text-craftRed mb-2 group-hover:scale-110 transition-transform">Drop Image</div>
+                                <p class="text-xs font-bold uppercase tracking-widest text-taupe" style="letter-spacing:0.12em;">or click to browse</p>
+                            </div>
+                            <div id="image-preview-container" class="hidden absolute inset-0 bg-parchment flex items-center justify-center p-2">
+                                <img id="image-preview" src="#" alt="Preview" class="max-w-full max-h-full object-cover rounded border-2 border-dashed border-craftRed/30">
+                                <button onclick="clearUploadedImage(event)" class="absolute top-2 right-2 craft-btn-outline text-xs px-3 py-1">Clear</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Generate Button -->
+                    <button id="generate-style-btn" onclick="triggerStylingEngine()" class="craft-btn w-full py-4 mt-6 flex items-center justify-center gap-2">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l1.5 4.5L14 7l-4.5 1.5L8 13l-1.5-4.5L2 7l4.5-1.5z"/></svg>
+                        <span id="btn-text">Generate Outfit</span>
+                    </button>
+
+                    <!-- Loading Bar -->
+                    <div id="ai-loading-container" class="hidden mt-4">
+                        <div class="text-xs font-bold text-craftRed uppercase tracking-widest mb-2 animate-pulse" id="loading-status-text" style="letter-spacing:0.15em;">Scanning database...</div>
+                        <div class="w-full h-2 bg-linen rounded-full overflow-hidden border border-dashed border-craftRed/20">
+                            <div id="loading-bar-fill" class="h-full w-0 rounded-full transition-all duration-300"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ── RIGHT: Output ── -->
+                <div class="lg:col-span-7 stitch-card p-8 md:p-10 flex flex-col min-h-[560px] relative">
+                    <div class="absolute top-3 right-3 w-4 h-4 border-t-2 border-r-2 border-dashed border-craftRed/30 rounded-tr"></div>
+
+                    <!-- Empty State -->
+                    <div id="results-empty-state" class="flex-1 flex flex-col items-center justify-center text-center">
+                        <div class="font-script text-7xl text-craftRed/20 mb-4">S.</div>
+                        <p class="text-xs font-bold uppercase tracking-widest text-taupe mb-2" style="letter-spacing:0.15em;">Canvas Empty</p>
+                        <p class="text-sm text-taupe font-sans" style="font-weight:300; max-width:260px;">
+                            Describe a fashion vibe in the studio, and your outfit blueprint will appear here.
+                        </p>
+                    </div>
+
+                    <!-- Filled State -->
+                    <div id="results-filled-state" class="hidden flex-1 flex flex-col">
+
+                        <div class="mb-6 pb-4 border-b-2 border-dashed border-craftRed/15">
+                            <span class="text-xs font-bold uppercase tracking-widest text-craftRed" style="letter-spacing:0.18em;">Identified Aesthetic</span>
+                            <h3 id="result-concept-title" class="font-script text-4xl md:text-5xl text-warmBrown mt-1 mb-3"></h3>
+                            <p id="result-analysis-text" class="text-sm text-taupe leading-relaxed" style="font-weight:300;"></p>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 flex-1">
+
+                            <div class="space-y-6">
+                                <div>
+                                    <h4 class="text-xs font-bold uppercase tracking-widest text-warmBrown mb-3" style="letter-spacing:0.15em;">Style Rules</h4>
+                                    <ul id="result-rules-list" class="space-y-2"></ul>
+                                </div>
+                                <div>
+                                    <h4 class="text-xs font-bold uppercase tracking-widest text-warmBrown mb-3" style="letter-spacing:0.15em;">Colour Palette</h4>
+                                    <div id="result-palette-grid" class="flex flex-col gap-2"></div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <h4 class="text-xs font-bold uppercase tracking-widest text-warmBrown mb-3" style="letter-spacing:0.15em;">Required Pieces</h4>
+                                <div id="result-items-grid" class="flex flex-col gap-3"></div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <hr class="stitch-divider mx-8 my-4">
+
+    <!-- ══════════════════════════════════════════════
+         BROWSE ALL STYLES — CATEGORY GRID
+    ══════════════════════════════════════════════ -->
+    <section id="browse" class="py-20 px-6 md:px-12 relative overflow-hidden">
+        <!-- Sketch float: Dress -->
+        <div class="sketch-float" style="top:15%; right:8%; transform:rotate(5deg);">
+            <svg width="40" height="60" viewBox="0 0 40 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M 12 4 L 28 4 L 32 14 L 26 20 L 26 24 L 36 56 L 4 56 L 14 24 L 14 20 L 8 14 Z" stroke="#2C2417" stroke-width="1.5" stroke-linejoin="round" fill="none"/>
+                <line x1="14" y1="24" x2="26" y2="24" stroke="#2C2417" stroke-width="1.5"/>
+                <line x1="20" y1="4" x2="20" y2="10" stroke="#2C2417" stroke-width="1.5"/>
+            </svg>
+        </div>
+        <!-- Sketch float: Hat -->
+        <div class="sketch-float" style="bottom:15%; left:6%; transform:rotate(-15deg);">
+            <svg width="60" height="30" viewBox="0 0 60 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M 10 26 C 10 26 30 32 50 26" stroke="#2C2417" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+                <path d="M 16 26 C 16 10 20 4 30 4 C 40 4 44 10 44 26" stroke="#2C2417" stroke-width="1.5" fill="none"/>
+                <path d="M 16 20 C 26 22 34 22 44 20" stroke="#2C2417" stroke-width="1.5" fill="none"/>
+            </svg>
+        </div>
+        <div class="max-w-6xl mx-auto">
+
+            <div class="text-center mb-12">
+                <p class="text-xs font-bold uppercase tracking-widest text-craftRed mb-2" style="letter-spacing:0.2em;">70+ Aesthetics</p>
+                <h2 class="font-script text-5xl text-warmBrown mb-4">Browse All Styles</h2>
+                <p class="text-sm text-taupe" style="font-weight:300;">Filter by category, then click any style to load it into the Studio.</p>
+            </div>
+
+            <!-- Category Filter Bar -->
+            <div class="flex flex-wrap gap-2 justify-center mb-10" id="category-filter-bar">
+                <button class="cat-tag active" data-cat="all" onclick="filterByCategory(this,'all')">All Styles</button>
+                <button class="cat-tag" data-cat="classic" onclick="filterByCategory(this,'classic')">Classic</button>
+                <button class="cat-tag" data-cat="streetwear" onclick="filterByCategory(this,'streetwear')">Streetwear</button>
+                <button class="cat-tag" data-cat="dark" onclick="filterByCategory(this,'dark')">Dark / Alt</button>
+                <button class="cat-tag" data-cat="feminine" onclick="filterByCategory(this,'feminine')">Feminine</button>
+                <button class="cat-tag" data-cat="internet" onclick="filterByCategory(this,'internet')">Internet</button>
+                <button class="cat-tag" data-cat="cultural" onclick="filterByCategory(this,'cultural')">Cultural</button>
+                <button class="cat-tag" data-cat="vintage" onclick="filterByCategory(this,'vintage')">Vintage</button>
+                <button class="cat-tag" data-cat="utility" onclick="filterByCategory(this,'utility')">Utility</button>
+                <button class="cat-tag" data-cat="maximalist" onclick="filterByCategory(this,'maximalist')">Maximalist</button>
+            </div>
+
+            <!-- Style Grid -->
+            <div id="style-browse-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3"></div>
+        </div>
+    </section>
+
+    <hr class="stitch-divider mx-8 my-4">
+
+    <!-- ══════════════════════════════════════════════
+         ENCYCLOPEDIA
+    ══════════════════════════════════════════════ -->
+    <section id="encyclopedia" class="py-20 px-6 md:px-12 relative overflow-hidden">
+        <!-- Sketch float: Bow Tie -->
+        <div class="sketch-float" style="top:10%; left:35%; transform:rotate(-5deg);">
+            <svg width="40" height="20" viewBox="0 0 40 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M 20 10 L 4 2 L 4 18 Z" stroke="#2C2417" stroke-width="1.5" fill="none" stroke-linejoin="round"/>
+                <path d="M 20 10 L 36 2 L 36 18 Z" stroke="#2C2417" stroke-width="1.5" fill="none" stroke-linejoin="round"/>
+                <circle cx="20" cy="10" r="4" stroke="#2C2417" stroke-width="1.5" fill="none"/>
+            </svg>
+        </div>
+        <!-- Sketch float: Boot -->
+        <div class="sketch-float" style="bottom:12%; right:15%; transform:rotate(10deg);">
+            <svg width="50" height="40" viewBox="0 0 50 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M 14 4 L 24 4 L 24 20 C 30 24 44 26 44 32 L 44 36 L 10 36 L 10 10 Z" stroke="#2C2417" stroke-width="1.5" stroke-linejoin="round" fill="none"/>
+                <line x1="14" y1="36" x2="14" y2="38" stroke="#2C2417" stroke-width="1.5" stroke-linecap="round"/>
+                <line x1="40" y1="36" x2="40" y2="38" stroke="#2C2417" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+        </div>
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row gap-12 items-start">
+
+            <!-- Left sticky -->
+            <div class="flex-1 md:sticky top-24">
+                <p class="text-xs font-bold uppercase tracking-widest text-craftRed mb-2" style="letter-spacing:0.2em;">Fashion Education</p>
+                <h2 class="font-script text-5xl text-warmBrown mb-4">The Encyclopedia</h2>
+                <p class="text-sm text-taupe leading-relaxed mb-8" style="font-weight:300; max-width:340px;">
+                    Fashion is a language. Click any aesthetic to decode its philosophy, rules, and palette.
+                </p>
+                <div class="flex flex-wrap gap-2" id="encyclopedia-tags"></div>
+            </div>
+
+            <!-- Right detail panel -->
+            <div class="flex-1 w-full stitch-card p-8 min-h-[360px] flex items-center justify-center relative">
+                <div class="absolute top-3 right-3 font-script text-craftRed/20 text-2xl">✦</div>
+
+                <div id="encyclopedia-default" class="text-center px-6 transition-opacity duration-300">
+                    <div class="font-script text-5xl text-craftRed/30 mb-4">"</div>
+                    <p class="font-script text-2xl text-warmBrown mb-3 italic">Aesthetic is the visual manifestation of internal philosophy.</p>
+                    <p class="text-xs text-taupe" style="font-weight:300;">Select any style from the left to decode it.</p>
+                </div>
+
+                <div id="encyclopedia-detail" class="w-full opacity-0 pointer-events-none absolute inset-0 p-8 bg-parchment rounded flex flex-col">
+                    <div class="flex justify-between items-start mb-4 pb-4 border-b-2 border-dashed border-craftRed/15">
+                        <h3 id="encyclopedia-title" class="font-script text-4xl text-warmBrown"></h3>
+                        <button onclick="closeEncyclopediaDetail()" class="text-taupe hover:text-craftRed transition-colors text-xl font-bold leading-none">✕</button>
+                    </div>
+                    <p id="encyclopedia-analysis" class="text-sm text-taupe leading-relaxed mb-6 flex-1 overflow-y-auto" style="font-weight:300;"></p>
+                    <button id="encyclopedia-load-btn" class="craft-btn w-full py-3">Load into Studio →</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <hr class="stitch-divider mx-8 my-4">
+
+    <!-- ══════════════════════════════════════════════
+         FOOTER
+    ══════════════════════════════════════════════ -->
+    <footer class="py-12 text-center bg-parchment border-t-2 border-dashed border-craftRed/20">
+        <div class="font-script text-3xl text-warmBrown mb-2">The Style Studio</div>
+        <p class="text-xs font-bold uppercase tracking-widest text-taupe" style="letter-spacing:0.2em;">The Universal Fashion Library &nbsp;✦&nbsp; 2026</p>
+        <div class="mt-6 flex justify-center gap-2 flex-wrap px-4">
+            <span class="text-xs text-taupe/50">Images via Unsplash &</span>
+            <span class="text-xs text-taupe/50">Google Image Search</span>
+        </div>
+    </footer>
+
+    <!-- ══════════════════════════════════════════════
+         JAVASCRIPT — DATABASE + ENGINE
+    ══════════════════════════════════════════════ -->
+    <script>
+    // ================================================================
+    // THE STYLE STUDIO — MASTER FASHION DATABASE (70+ AESTHETICS)
+    // ================================================================
+    const fashionDatabase = [
+
+        // ═══════════════ CLASSIC / TIMELESS ═══════════════
+
+        {
+            category: "classic",
+            keywords: ["quiet luxury","old money","minimalist","elegant","cashmere","no logo","stealth wealth","loro piana","brunello","zegna","neutral"],
+            conceptName: "Quiet Luxury",
+            profileAnalysis: "Quiet Luxury projects wealth through quality, not logos. A uniform of cashmere turtlenecks, perfectly-cut trousers, and impeccable leather accessories. No branding. No noise. Just craft.",
+            stylingRules: ["Never wear visible logos.", "Palette: camel, ivory, greige, charcoal, navy.", "Invest in one perfect outerwear — the rest follows."],
+            colorPalette: [{ name: "Camel", hex: "#C5A07F" }, { name: "Alabaster", hex: "#F5F2EB" }, { name: "Charcoal", hex: "#3A3A3C" }],
+            imageSearchTerms: { outerwear: "camel wool overcoat luxury minimal", top: "cashmere turtleneck cream luxury", bottom: "tailored grey trousers luxury", shoes: "leather loafer horsebit luxury" },
+            recommendedOutfit: [
+                { item: "Tailored Camel Overcoat", role: "Outerwear", styleTip: "Double-faced wool, clean lapels." },
+                { item: "Cashmere Mock Neck", role: "Top", styleTip: "Ivory or oatmeal. Nothing cheaper." },
+                { item: "Straight-Leg Charcoal Trousers", role: "Bottom", styleTip: "Sharply pressed crease." },
+                { item: "Chocolate Leather Loafers", role: "Shoes", styleTip: "Penny or horsebit — your call." }
+            ]
+        },
+        {
+            category: "classic",
+            keywords: ["dark academia","scholarly","tweed","bookish","oxford","cambridge","library","literary","professor"],
+            conceptName: "Dark Academia",
+            profileAnalysis: "If your life takes place inside an ancient library with oil-painting portraits, you dress in Dark Academia. Tweed, turtlenecks, pea coats, and the quiet thrill of forbidden knowledge.",
+            stylingRules: ["Layer knitwear over crisp oxford shirts.", "Tweed, corduroy, heavy wool only.", "Footwear is always leather — brogues, oxfords, or chelsea boots."],
+            colorPalette: [{ name: "Espresso", hex: "#3B2F2F" }, { name: "Bottle Green", hex: "#1A3C2A" }, { name: "Burgundy", hex: "#800020" }],
+            imageSearchTerms: { outerwear: "herringbone tweed blazer academic", top: "turtleneck sweater dark brown", bottom: "high waist pleated wool trousers", shoes: "leather oxford brogue dark brown" },
+            recommendedOutfit: [
+                { item: "Herringbone Tweed Blazer", role: "Outerwear", styleTip: "Leather elbow patches." },
+                { item: "Ribbed Turtleneck", role: "Top", styleTip: "In espresso, forest, or rust." },
+                { item: "High-Waisted Pleated Trousers", role: "Bottom", styleTip: "Wool-blend, classic cut." },
+                { item: "Dark Leather Oxford Brogues", role: "Shoes", styleTip: "Polished, but not too perfect." }
+            ]
+        },
+        {
+            category: "classic",
+            keywords: ["light academia","poetry","cream","jane austen","soft scholarly","pastel scholar","classical music","afternoon sun"],
+            conceptName: "Light Academia",
+            profileAnalysis: "Dark Academia's sun-lit sibling. Cream blazers, poetry in the garden, pressed white shirts, and the optimism of a new chapter. Same books, different light.",
+            stylingRules: ["Pale warm tones: cream, ivory, dusty rose, sage, tan.", "Layer blazers over soft blouses.", "Round glasses and a hardback novel finish the look."],
+            colorPalette: [{ name: "Cream Linen", hex: "#FFF8E7" }, { name: "Dusty Rose", hex: "#DCAE96" }, { name: "Warm Caramel", hex: "#C49A6C" }],
+            imageSearchTerms: { outerwear: "cream blazer light academia", top: "white lace blouse soft romantic", bottom: "pleated midi skirt cream academic", shoes: "brown leather mary jane vintage" },
+            recommendedOutfit: [
+                { item: "Cream Linen Blazer", role: "Outerwear", styleTip: "Slightly oversized, rolled sleeves." },
+                { item: "White Lace Blouse", role: "Top", styleTip: "Delicate collar, pearl buttons." },
+                { item: "Caramel Midi Skirt", role: "Bottom", styleTip: "A-line, just below the knee." },
+                { item: "Brown Mary Janes", role: "Shoes", styleTip: "Block heel, subtle buckle." }
+            ]
+        },
+        {
+            category: "classic",
+            keywords: ["preppy","ivy league","blazer","polo","loafer","old school","collegiate","madras","popped collar","east coast"],
+            conceptName: "Preppy",
+            profileAnalysis: "Born on the playing fields of New England, the preppy aesthetic communicates privilege through heritage sportswear: rugby shirts, blazers with crests, and immaculate white tennis shoes.",
+            stylingRules: ["Layer a crewneck over a collared shirt — collar popped.", "Madras plaid or repp stripe are signature prints.", "Loafers or white sneakers only."],
+            colorPalette: [{ name: "Navy", hex: "#1C2B5A" }, { name: "Cream", hex: "#FDFBF5" }, { name: "Burgundy", hex: "#7B2242" }],
+            imageSearchTerms: { outerwear: "preppy blazer crest vintage", top: "polo shirt preppy ivy league", bottom: "khaki chino trousers prep", shoes: "penny loafer leather preppy" },
+            recommendedOutfit: [
+                { item: "Navy Crested Blazer", role: "Outerwear", styleTip: "Gold buttons, chest pocket, school crest." },
+                { item: "Striped Oxford Shirt", role: "Top", styleTip: "Collar popped under the blazer." },
+                { item: "Khaki Chinos", role: "Bottom", styleTip: "Clean break, slim or regular." },
+                { item: "Tan Penny Loafers", role: "Shoes", styleTip: "With a coin or without — tradition decides." }
+            ]
+        },
+        {
+            category: "classic",
+            keywords: ["french girl","parisian","effortless","je ne sais quoi","stripe","beret","trench","nonchalant","chic"],
+            conceptName: "French Girl",
+            profileAnalysis: "The French girl doesn't try. A breton stripe, high-waisted jeans, a silk scarf knotted carelessly, and a trench coat thrown on at the last minute. Perfect through apparent indifference.",
+            stylingRules: ["A stripe tee is your uniform base.", "Red lip or bare skin — no in-between.", "One quality leather bag. No logo."],
+            colorPalette: [{ name: "Navy Stripe", hex: "#233B70" }, { name: "Cream", hex: "#F9F7F2" }, { name: "Brick Red", hex: "#A83232" }],
+            imageSearchTerms: { outerwear: "french trench coat parisian", top: "breton stripe top french girl", bottom: "straight leg denim french style", shoes: "ballet flat leather french" },
+            recommendedOutfit: [
+                { item: "Breton Stripe Tee", role: "Top", styleTip: "Navy and white. Tucked in front only." },
+                { item: "High-Rise Straight Jeans", role: "Bottom", styleTip: "Dark wash, ankle length." },
+                { item: "Beige Trench Coat", role: "Outerwear", styleTip: "Belted loosely, one side undone." },
+                { item: "Black Ballet Flats", role: "Shoes", styleTip: "Slightly scuffed = more authentic." }
+            ]
+        },
+        {
+            category: "classic",
+            keywords: ["scandinavian","hygge","nordic","minimal warm","functional","lagom","clean lines","nordic fashion"],
+            conceptName: "Scandinavian Minimal",
+            profileAnalysis: "Nordic design philosophy applied to dressing. Functional warmth, clean geometry, and a palette drawn entirely from nature's quietest moments — snow, birch, slate, and lichen.",
+            stylingRules: ["Function first, aesthetic second — always warm.", "Palette: white, grey, camel, navy, rust.", "One graphic or textured piece against plain basics."],
+            colorPalette: [{ name: "Birch White", hex: "#F0EDE5" }, { name: "Slate", hex: "#6E7B8B" }, { name: "Rust", hex: "#9B4520" }],
+            imageSearchTerms: { outerwear: "nordic wool coat minimal clean", top: "ribbed knit sweater minimal scandi", bottom: "wide leg trousers minimal scandi", shoes: "clean white sneaker minimal" },
+            recommendedOutfit: [
+                { item: "Chunky Knit Wool Coat", role: "Outerwear", styleTip: "Oatmeal or sand, oversized wrap." },
+                { item: "Fine Ribbed Turtleneck", role: "Top", styleTip: "In slate or rust — one pop colour." },
+                { item: "Pleated Wide-Leg Trousers", role: "Bottom", styleTip: "High-waisted, fluid drape." },
+                { item: "White Leather Trainers", role: "Shoes", styleTip: "Spotlessly clean. Always." }
+            ]
+        },
+
+        // ═══════════════ STREETWEAR ═══════════════
+
+        {
+            category: "streetwear",
+            keywords: ["y2k","streetwear","2000s","baggy","skater","retro","90s","early 2000","baby tee","rhinestone","cargo","von dutch","low rise"],
+            conceptName: "Y2K Streetwear",
+            profileAnalysis: "The aesthetic of the millennium crash. Low-rise, over-saturated, rhinestone-dusted, and unabashedly chaotic. Powered by nostalgia but worn as a statement today.",
+            stylingRules: ["Low-rise is mandatory.", "Oversized graphic tees cropped or knotted.", "Add one absurd 2000s accessory — visor, tinted glasses, butterfly clip."],
+            colorPalette: [{ name: "Baby Blue", hex: "#89CFF0" }, { name: "Hot Pink", hex: "#FF69B4" }, { name: "Chrome Silver", hex: "#C0C0C0" }],
+            imageSearchTerms: { outerwear: "y2k crop jacket rhinestone", top: "y2k baby tee graphic 2000s", bottom: "low rise baggy jeans y2k", shoes: "platform sneakers chunky y2k" },
+            recommendedOutfit: [
+                { item: "Cropped Rhinestone Hoodie", role: "Top", styleTip: "The bigger the logo, the better." },
+                { item: "Low-Rise Baggy Flares", role: "Bottom", styleTip: "Hit 2 inches below the navel." },
+                { item: "Platform Chunky Sneakers", role: "Shoes", styleTip: "Trolley wheels-level thickness." },
+                { item: "Micro Tinted Sunglasses", role: "Accessories", styleTip: "Completely impractical." }
+            ]
+        },
+        {
+            category: "streetwear",
+            keywords: ["blokecore","football","soccer jersey","vintage sports","adidas","90s sport","british casual","terraces","football shirt"],
+            conceptName: "Blokecore",
+            profileAnalysis: "The terraces have never looked so cool. Vintage match-day jerseys, Adidas Sambas, and straight-leg jeans. Football culture absorbed by streetwear.",
+            stylingRules: ["A vintage 90s football jersey is the core piece.", "Sambas or Gazelles — no other sneaker.", "Straight-leg jeans, no distressing."],
+            colorPalette: [{ name: "Pitch Green", hex: "#006400" }, { name: "Match White", hex: "#F5F5F5" }, { name: "Kit Red", hex: "#CC0000" }],
+            imageSearchTerms: { top: "90s football jersey vintage retro", bottom: "straight leg light wash jeans", shoes: "adidas samba classic white", outerwear: "retro track jacket adidas" },
+            recommendedOutfit: [
+                { item: "Vintage 90s Football Jersey", role: "Top", styleTip: "Slightly oversized, tucked or tied." },
+                { item: "Straight-Leg Light Wash Jeans", role: "Bottom", styleTip: "No distressing. Clean ankle crop." },
+                { item: "Adidas Samba OG", role: "Shoes", styleTip: "White leather, gum sole." },
+                { item: "Retro Track Jacket", role: "Outerwear", styleTip: "Worn open over the jersey." }
+            ]
+        },
+        {
+            category: "streetwear",
+            keywords: ["normcore","anti-fashion","normal","deliberate basic","new balance","no trend","default","plain","steve jobs"],
+            conceptName: "Normcore",
+            profileAnalysis: "The most radical statement is to make none. Normcore is post-ironic anti-style — plain tees, New Balance, light wash jeans, and the quiet confidence of opting out.",
+            stylingRules: ["Nothing distinguishing. Everything functional.", "New Balance 991/992 is the canonical sneaker.", "Nothing should draw the eye to any single element."],
+            colorPalette: [{ name: "Plain White", hex: "#F8F8F8" }, { name: "Light Wash", hex: "#A8BFD0" }, { name: "Heather Grey", hex: "#B2B2B2" }],
+            imageSearchTerms: { outerwear: "plain windbreaker zip up grey", top: "white t-shirt plain minimal", bottom: "light wash straight jeans regular", shoes: "new balance 993 grey sneaker" },
+            recommendedOutfit: [
+                { item: "Plain White T-Shirt", role: "Top", styleTip: "Washed, tucked or not — genuinely doesn't matter." },
+                { item: "Light-Wash Straight Jeans", role: "Bottom", styleTip: "Regular fit. Regular length." },
+                { item: "Grey Zip-Up Windbreaker", role: "Outerwear", styleTip: "No logo. Or a logo no one knows." },
+                { item: "New Balance 991 in Grey", role: "Shoes", styleTip: "The father-shoe. Worn without irony." }
+            ]
+        },
+        {
+            category: "streetwear",
+            keywords: ["skater","skateboard","half-cab","vans","thrasher","bucket hat","baggy","sk8","skate","loose graphic"],
+            conceptName: "Skater",
+            profileAnalysis: "Skateboarding's influence on fashion — not the performance gear, but the culture. Baggy fits, graphic tees from bands and brands, and shoes designed to take punishment.",
+            stylingRules: ["Fit should be baggy but not shapeless.", "Graphic tee is the hero — everything else steps back.", "Vans, DC, or Nike SB are the approved footwear."],
+            colorPalette: [{ name: "Washed Black", hex: "#2A2A2A" }, { name: "Off White", hex: "#FAF8F2" }, { name: "Faded Red", hex: "#A33030" }],
+            imageSearchTerms: { top: "thrasher graphic tee skate", bottom: "baggy cargo pants skater", shoes: "vans old skool skate", outerwear: "skate hoodie baggy vintage" },
+            recommendedOutfit: [
+                { item: "Oversized Band Graphic Tee", role: "Top", styleTip: "Cut the sleeves off. Or don't." },
+                { item: "Baggy Cargo Pants", role: "Bottom", styleTip: "Dropped crotch, utility pockets." },
+                { item: "Vans Old Skool", role: "Shoes", styleTip: "Beat up is the correct state." },
+                { item: "Distressed Zip Hoodie", role: "Outerwear", styleTip: "Worn open, strings missing." }
+            ]
+        },
+        {
+            category: "streetwear",
+            keywords: ["acubi","korean fashion","subversive basic","quiet y2k","translucent","layered basics","neutral cute","korean street"],
+            conceptName: "Acubi",
+            profileAnalysis: "The Korean internet's answer to quiet rebellion. Ultra-minimal Y2K energy through translucent layering, asymmetrical cuts, and the most muted possible palette.",
+            stylingRules: ["Translucent or sheer layers over basic tanks.", "Muted: grey, beige, washed black, pale lavender only.", "Asymmetry in necklines or hem lengths adds the edge."],
+            colorPalette: [{ name: "Warm Grey", hex: "#9E9E9E" }, { name: "Oat", hex: "#D4C5B0" }, { name: "Faded Black", hex: "#2C2C2C" }],
+            imageSearchTerms: { top: "korean fashion translucent sheer knit top", bottom: "parachute pants nylon low rise korean", shoes: "platform mary jane black korean street", outerwear: "sheer layer cardigan korean fashion" },
+            recommendedOutfit: [
+                { item: "Sheer Ribbed Long-Sleeve", role: "Top", styleTip: "Over a basic bra or cropped tank." },
+                { item: "Low-Rise Nylon Parachute Pants", role: "Bottom", styleTip: "Sits 2 inches below hip, straight leg." },
+                { item: "Platform Mary Janes", role: "Shoes", styleTip: "Black or cream, thick strap." },
+                { item: "Mini Crescent Shoulder Bag", role: "Accessories", styleTip: "Tiny, structured, tonal." }
+            ]
+        },
+        {
+            category: "streetwear",
+            keywords: ["urban luxe","luxury streetwear","off white","designer hoodie","sneaker culture","hype","hypebeast"],
+            conceptName: "Urban Luxe",
+            profileAnalysis: "Luxury and the street negotiating. Off-White belts, Nike collabs, hoodies that cost what cars cost. The elite wearing what everyone wears — just 10× the price.",
+            stylingRules: ["One luxury piece + one streetwear piece. Never both luxury.", "Hoodie under a blazer is the foundational hack.", "The sneaker is always the hero."],
+            colorPalette: [{ name: "Off-White", hex: "#F5F0E8" }, { name: "Cinder Black", hex: "#1C1C1C" }, { name: "Industrial Yellow", hex: "#F5C518" }],
+            imageSearchTerms: { top: "luxury brand hoodie off white streetwear", bottom: "tailored cargo trousers luxury", shoes: "designer sneaker limited edition", outerwear: "luxury unstructured blazer streetwear" },
+            recommendedOutfit: [
+                { item: "Luxury Brand Hoodie", role: "Top", styleTip: "Under an unstructured blazer." },
+                { item: "Tailored Cargo Trousers", role: "Bottom", styleTip: "Sharp crease, functional pockets." },
+                { item: "Limited-Edition Sneakers", role: "Shoes", styleTip: "The hero piece. Everything else supports." },
+                { item: "Industrial Webbing Belt", role: "Accessories", styleTip: "Visible branding acceptable here only." }
+            ]
+        },
+
+        // ═══════════════ DARK / ALTERNATIVE ═══════════════
+
+        {
+            category: "dark",
+            keywords: ["opium","playboi carti","rick owens","avant-garde","vampire","leather","all black","goth","destructed","brutalist","dark"],
+            conceptName: "Opium Core",
+            profileAnalysis: "Controlled chaos in black. Rick Owens proportion-play meets Playboi Carti renegade energy. Leather, distressing, exaggerated silhouettes, and absolute darkness.",
+            stylingRules: ["All black. Zero exceptions.", "Extremes of proportion: cropped OR floor-length.", "One brutal element (platform boot, dragon hoodie) required."],
+            colorPalette: [{ name: "Pitch Black", hex: "#000000" }, { name: "Matte Onyx", hex: "#111111" }, { name: "Washed Carbon", hex: "#2A2A2A" }],
+            imageSearchTerms: { outerwear: "rick owens black leather jacket avant garde", top: "black gothic mesh layer top", bottom: "destroyed black coated denim", shoes: "platform brutalist boots black goth" },
+            recommendedOutfit: [
+                { item: "Cropped Rick Owens Leather Jacket", role: "Outerwear", styleTip: "Dramatic armhole, raw edge." },
+                { item: "Black Mesh Layering Top", role: "Top", styleTip: "Under a heavy cotton tee for texture." },
+                { item: "Destroyed Coated Denim", role: "Bottom", styleTip: "Coated or distressed — never clean." },
+                { item: "Brutalist Platform Boots", role: "Shoes", styleTip: "7cm minimum sole height." }
+            ]
+        },
+        {
+            category: "dark",
+            keywords: ["romantic goth","gothic","victorian goth","dark romance","corset","lace","velvet","ruffles","dark floral","cemetery"],
+            conceptName: "Romantic Gothic",
+            profileAnalysis: "A mourning ceremony for beauty. Victorian silhouettes, bleeding-heart florals, cathedral lace, and velvet draped over a core of grief and grace.",
+            stylingRules: ["Velvet and lace are the two primary fabrics.", "Corset silhouettes define the waist; volume defines the skirt.", "Deep jewel tones: burgundy, midnight violet, emerald, black."],
+            colorPalette: [{ name: "Midnight Burgundy", hex: "#4A0010" }, { name: "Cathedral Purple", hex: "#2D1B69" }, { name: "Mourning Black", hex: "#0A0A0A" }],
+            imageSearchTerms: { outerwear: "victorian velvet cape gothic", top: "lace corset dark romantic gothic", bottom: "black velvet maxi skirt gothic", shoes: "victorian lace-up heeled boots dark" },
+            recommendedOutfit: [
+                { item: "Velvet Corseted Bodice", role: "Top", styleTip: "Boned structure, deep neckline." },
+                { item: "Cathedral Lace Maxi Skirt", role: "Bottom", styleTip: "Layered over a silk slip." },
+                { item: "Draped Velvet Cape", role: "Outerwear", styleTip: "Floor-length, mystery mandatory." },
+                { item: "Victorian Lace-Up Heeled Boots", role: "Shoes", styleTip: "Kid-leather or patent." }
+            ]
+        },
+        {
+            category: "dark",
+            keywords: ["cyberpunk","neon","techwear","matrix","dystopian","hacker","sci-fi","futuristic","synthwave","cyber","rave","tactical"],
+            conceptName: "Cyberpunk",
+            profileAnalysis: "The city is dark, the lights are neon. Straps, buckles, tactical panels, and a neon trim on everything. You are the main character of a surveillance thriller.",
+            stylingRules: ["Base layer is always black.", "Neon cyan, electric purple, or hot pink — one colour only.", "Utility comes first: cargo pockets, harnesses, clips."],
+            colorPalette: [{ name: "Void Black", hex: "#050505" }, { name: "Neon Cyan", hex: "#00FFFF" }, { name: "Electric Violet", hex: "#8B00FF" }],
+            imageSearchTerms: { outerwear: "techwear neon cyberpunk trench coat", top: "futuristic tactical mesh top black", bottom: "tactical cargo pants straps black", shoes: "platform utility boots chunky neon" },
+            recommendedOutfit: [
+                { item: "Neon-Trimmed Tactical Trench", role: "Outerwear", styleTip: "Multiple strap closures, hidden pockets." },
+                { item: "Mesh Tactical Top", role: "Top", styleTip: "Layered under a black tactical vest." },
+                { item: "Strapped Cargo Joggers", role: "Bottom", styleTip: "Buckles and zips at every seam." },
+                { item: "Platform Utility Boots", role: "Shoes", styleTip: "Chunky armour-plated look." }
+            ]
+        },
+        {
+            category: "dark",
+            keywords: ["punk","anarchic","safety pin","tartan","ripped","mohawk","band patch","bondage","vivienne westwood","anti-establishment"],
+            conceptName: "Punk",
+            profileAnalysis: "Fashion with a manifesto. Deliberately broken, aggressively assembled, charged with defiance. Rips, pins, patches, tartan bondage trousers, and the philosophy that fashion should frighten.",
+            stylingRules: ["Destroy first, style second.", "Tartan and leather are the two sacred fabrics.", "Layer patches, pins, chains until the garment says something."],
+            colorPalette: [{ name: "Tartan Red", hex: "#8B0000" }, { name: "Bondage Black", hex: "#0A0A0A" }, { name: "Anarchy Gold", hex: "#CFB53B" }],
+            imageSearchTerms: { outerwear: "punk leather jacket patches pins", top: "ripped band tee punk safety pins", bottom: "tartan bondage trousers punk", shoes: "dr martens boots punk yellow stitch" },
+            recommendedOutfit: [
+                { item: "Battle-Worn Leather Jacket", role: "Outerwear", styleTip: "Covered in band patches and safety pins." },
+                { item: "Ripped Band Tee", role: "Top", styleTip: "Torn, knotted, or bleached. Not bought that way." },
+                { item: "Tartan Bondage Trousers", role: "Bottom", styleTip: "Vivienne Westwood blueprint: D-rings, strap." },
+                { item: "Dr. Martens 1460", role: "Shoes", styleTip: "Yellow stitch. Well-worn." }
+            ]
+        },
+        {
+            category: "dark",
+            keywords: ["techwear","ninja","gorka","acronym","military tech","japanese street tech","black tech"],
+            conceptName: "Techwear",
+            profileAnalysis: "The convergence of military precision and Japanese streetwear aesthetics. ACRONYM-level engineering — waterproof, modular, and entirely monochromatic. Form and function unified.",
+            stylingRules: ["Monochrome — black only, or shades of charcoal.", "Every piece must have a functional purpose: pocket, D-ring, zip.", "Silhouette is structured and layered, never loose."],
+            colorPalette: [{ name: "Technical Black", hex: "#0A0A0A" }, { name: "Charcoal", hex: "#2D2D2D" }, { name: "Cold Grey", hex: "#707070" }],
+            imageSearchTerms: { outerwear: "acronym techwear jacket black technical", top: "ninja techwear top technical layer", bottom: "tactical techwear pants black", shoes: "nike sfb techwear black boots" },
+            recommendedOutfit: [
+                { item: "Hardshell Technical Jacket", role: "Outerwear", styleTip: "GORE-TEX, seam-sealed, D-ring equipped." },
+                { item: "Technical Turtleneck Layer", role: "Top", styleTip: "Moisture-wicking, clean fit." },
+                { item: "Modular Cargo Pants", role: "Bottom", styleTip: "Detachable pockets, drawstring cuffs." },
+                { item: "Technical Hiking Boots", role: "Shoes", styleTip: "Waterproof, aggressive lug sole." }
+            ]
+        },
+        {
+            category: "dark",
+            keywords: ["emo revival","emo","black skinny","band tee","side fringe","emo pop","pop punk","scene","fall out boy","my chemical romance"],
+            conceptName: "Emo Revival",
+            profileAnalysis: "2000s emotional resonance re-born. Black skinny jeans, band tees, side-swept fringe, and the kind of eyeliner that says 'I'm fine' while meaning the opposite.",
+            stylingRules: ["Black skinny jeans are non-negotiable.", "Band tee must be of a band you actually listen to.", "Side-swept hair partially covering one eye."],
+            colorPalette: [{ name: "Matte Black", hex: "#111111" }, { name: "Dark Grey", hex: "#3A3A3A" }, { name: "Blood Red", hex: "#8B0000" }],
+            imageSearchTerms: { top: "band tee emo black graphic", bottom: "black skinny jeans emo", shoes: "vans slip on black emo", outerwear: "black zip hoodie band emo" },
+            recommendedOutfit: [
+                { item: "Band Graphic Tee", role: "Top", styleTip: "MCR, FOB, Paramore — your choice, be honest." },
+                { item: "Black Skinny Jeans", role: "Bottom", styleTip: "Tight at the ankle, slightly ripped knee." },
+                { item: "Black Vans Slip-Ons", role: "Shoes", styleTip: "Or Converse All Stars. Both correct." },
+                { item: "Black Zip-Up Hoodie", role: "Outerwear", styleTip: "Worn open, strings intact for once." }
+            ]
+        },
+        {
+            category: "dark",
+            keywords: ["visual kei","vk","japanese glam metal","dramatic makeup","theatrical","jrock","hide","gazette","malice mizer"],
+            conceptName: "Visual Kei",
+            profileAnalysis: "Japanese visual rock taken to its theatrical extreme. Androgynous silhouettes, dramatic makeup, Victorian-meets-cyberpunk aesthetics, and the belief that a concert is a theatrical performance.",
+            stylingRules: ["Androgynous silhouettes — gender is irrelevant.", "Dramatic eye makeup with at least one theatrical element.", "Mix Victorian ruffles with industrial hardware freely."],
+            colorPalette: [{ name: "Stage Black", hex: "#0A0A0A" }, { name: "Crimson", hex: "#DC143C" }, { name: "White Dramatic", hex: "#FAFAFA" }],
+            imageSearchTerms: { top: "visual kei fashion japan dramatic", bottom: "visual kei pants bondage lacework", shoes: "platform boots visual kei japan", outerwear: "visual kei coat victorian dramatic" },
+            recommendedOutfit: [
+                { item: "Ruffled Victorian Coat", role: "Outerwear", styleTip: "Floor-length, asymmetric hem, ornate." },
+                { item: "Fishnet Top + Mesh Layer", role: "Top", styleTip: "Layered under a corseted harness." },
+                { item: "Bondage-Strap Flared Pants", role: "Bottom", styleTip: "Lacework detail, extreme flare." },
+                { item: "10cm Platform Boots", role: "Shoes", styleTip: "The stage demands height." }
+            ]
+        },
+
+        // ═══════════════ FEMININE / SOFT ═══════════════
+
+        {
+            category: "feminine",
+            keywords: ["balletcore","ballet","ribbons","pink","tulle","wrap","dancer","soft","feminine","ethereal","graceful","leotard"],
+            conceptName: "Balletcore",
+            profileAnalysis: "The rehearsal room made runway. Warm-up knits, wrap skirts, ribbon flats, and that perpetual turned-out walk. Femininity as dedication, not decoration.",
+            stylingRules: ["Wrap tops or leotards form the basis.", "Tulle, chiffon, or georgette — never below the knee.", "Leg warmers bunched over flats are signature."],
+            colorPalette: [{ name: "Ballet Blush", hex: "#FFD1DC" }, { name: "Warm Ivory", hex: "#FFFDD0" }, { name: "Dusty Rose", hex: "#DCAE96" }],
+            imageSearchTerms: { outerwear: "knit ballet wrap cardigan pink", top: "ballet wrap top leotard feminine", bottom: "tulle midi skirt ballet pink", shoes: "satin ballet flats ribbon" },
+            recommendedOutfit: [
+                { item: "Knit Wrap Cardigan", role: "Outerwear", styleTip: "Draped open, belt optional." },
+                { item: "Satin Wrap Top", role: "Top", styleTip: "V-neck, ballet blush or white." },
+                { item: "Flowy Tulle Midi Skirt", role: "Bottom", styleTip: "Layered for volume." },
+                { item: "Satin Ballet Flats with Ribbons", role: "Shoes", styleTip: "Wrap the ribbon up the ankle." }
+            ]
+        },
+        {
+            category: "feminine",
+            keywords: ["coquette","feminine","bow","lace","pink","dolly","soft hyper feminine","miu miu","cherry","cherry print","girly"],
+            conceptName: "Coquette",
+            profileAnalysis: "Weaponised femininity. Satin mini dresses, oversized bows, cherry prints, and the performance of girlhood so perfectly executed it becomes art.",
+            stylingRules: ["A bow is never too big.", "Mini length or nothing.", "Baby pink, red, and white are your operating palette."],
+            colorPalette: [{ name: "Baby Pink", hex: "#F4C2C2" }, { name: "Cherry Red", hex: "#D2001A" }, { name: "Vanilla", hex: "#F3E5AB" }],
+            imageSearchTerms: { top: "coquette bow top satin pink", bottom: "mini skirt satin coquette girly", shoes: "mary jane heels pink coquette", outerwear: "sheer bow blouse coquette feminine" },
+            recommendedOutfit: [
+                { item: "Satin Corset with Oversized Bow", role: "Top", styleTip: "The bow must be statement-sized." },
+                { item: "Pleated Cherry-Print Mini Skirt", role: "Bottom", styleTip: "Mid-thigh, full pleat." },
+                { item: "Platform Mary Janes", role: "Shoes", styleTip: "White or red patent leather." },
+                { item: "Sheer Lace Cardigan", role: "Outerwear", styleTip: "Floor-length, worn as a layer." }
+            ]
+        },
+        {
+            category: "feminine",
+            keywords: ["barbiecore","barbie","hot pink","plastic","hyperfeminine","doll","bubblegum","pink everything","saturated pink"],
+            conceptName: "Barbiecore",
+            profileAnalysis: "Life in plastic — it's fantastic. Maximum saturation pink, everything co-ordinated, and the confidence of someone who knows they look like a fashion doll. On purpose.",
+            stylingRules: ["Head-to-toe hot pink is the goal.", "Matching sets: everything co-ordinates within the pink spectrum.", "Patent leather, vinyl, and satin are preferred."],
+            colorPalette: [{ name: "Hot Pink", hex: "#FF69B4" }, { name: "Bubblegum", hex: "#FFC1CC" }, { name: "Barbie Fuschia", hex: "#E0218A" }],
+            imageSearchTerms: { outerwear: "hot pink blazer barbie aesthetic", top: "hot pink crop top vinyl barbie", bottom: "pink mini skirt patent leather", shoes: "pink platform mule heels barbie" },
+            recommendedOutfit: [
+                { item: "Pink Faux-Fur Trimmed Blazer", role: "Outerwear", styleTip: "Oversized, camp collar." },
+                { item: "Hot Pink Vinyl Crop Top", role: "Top", styleTip: "Maximum saturation." },
+                { item: "Pink Patent Mini Skirt", role: "Bottom", styleTip: "Structured or micro." },
+                { item: "Pink Platform Mule Heels", role: "Shoes", styleTip: "Matching or complementary pink." }
+            ]
+        },
+        {
+            category: "feminine",
+            keywords: ["cottagecore","cottage","pastoral","floral","prairie","nature","mushroom","fairy","countryside","botanical","meadow"],
+            conceptName: "Cottagecore",
+            profileAnalysis: "An ode to the pastoral idyll. Milkmaid dresses, embroidered linens, wicker baskets, and mud on your boots. A rejection of the city in the most beautiful way.",
+            stylingRules: ["Natural fibres only: cotton, linen, wool.", "Florals, checks, ditsy prints — layered freely.", "Pinafores and aprons worn as garments, not costumes."],
+            colorPalette: [{ name: "Sage Green", hex: "#8FAF8F" }, { name: "Buttercup", hex: "#FAD02C" }, { name: "Rosehip", hex: "#C27B7B" }],
+            imageSearchTerms: { outerwear: "linen pinafore apron cottagecore", top: "puff sleeve floral blouse pastoral", bottom: "floral prairie midi skirt cottagecore", shoes: "mary jane leather chunky buckle" },
+            recommendedOutfit: [
+                { item: "Puff-Sleeve Floral Linen Blouse", role: "Top", styleTip: "Billowing sleeves, smocked cuffs." },
+                { item: "Floral Midi Prairie Skirt", role: "Bottom", styleTip: "Tiered, full, ground-grazing hem." },
+                { item: "Linen Apron Pinafore", role: "Outerwear", styleTip: "Cross-back style over the blouse." },
+                { item: "Chunky Leather Mary Janes", role: "Shoes", styleTip: "Or ankle boots with mud still on them." }
+            ]
+        },
+        {
+            category: "feminine",
+            keywords: ["fairycore","fairy","wings","iridescent","dewdrop","fae","whimsy","ethereal","gossamer","pixie","enchanted forest"],
+            conceptName: "Fairycore",
+            profileAnalysis: "If cottagecore stepped into an enchanted forest at dusk. Iridescent fabrics, layered chiffon, flower crowns, and the feeling that you might dissolve into the mist at any moment.",
+            stylingRules: ["Layers of chiffon, organza, or tulle — the more floaty the better.", "Iridescent, holographic, or sheer fabrics preferred.", "Floral crowns, leaf accessories, and tiny gemstones are finishing touches."],
+            colorPalette: [{ name: "Mist White", hex: "#F0EFEB" }, { name: "Fairy Violet", hex: "#C5A8D8" }, { name: "Dewdrop Green", hex: "#AFCFB3" }],
+            imageSearchTerms: { top: "fairycore chiffon top iridescent fairy", bottom: "tulle layered skirt fairy ethereal", shoes: "strappy flat sandal fairy delicate", outerwear: "gossamer fairy wrap iridescent" },
+            recommendedOutfit: [
+                { item: "Layered Chiffon Wrap Dress", role: "Dress", styleTip: "Multiple floaty layers, asymmetric." },
+                { item: "Iridescent Organza Overlay Skirt", role: "Bottom", styleTip: "Worn over the dress for extra magic." },
+                { item: "Delicate Strappy Sandals", role: "Shoes", styleTip: "Thin straps, subtle crystal detail." },
+                { item: "Fresh Flower Crown", role: "Accessories", styleTip: "Or dried flowers — both are correct." }
+            ]
+        },
+        {
+            category: "feminine",
+            keywords: ["angelcore","angel","white","celestial","halo","heavenly","wings","pure","cloud","divine","angelic"],
+            conceptName: "Angelcore",
+            profileAnalysis: "Descending from the celestial plane wearing white satin and gold halos. Angelcore is divine femininity — clouds, light, innocence, and the aesthetic of something holy made wearable.",
+            stylingRules: ["All white or cream — celestial metals (gold, silver) as accent only.", "Floaty, light fabrics: chiffon, satin, silk.", "Wings (literal or implied through silhouette) complete the look."],
+            colorPalette: [{ name: "Heaven White", hex: "#FAFAFA" }, { name: "Halo Gold", hex: "#D4AF37" }, { name: "Cloud Grey", hex: "#E8E8E8" }],
+            imageSearchTerms: { top: "white chiffon angel top celestial", bottom: "white satin slip skirt angel aesthetic", shoes: "white platform sandal celestial angel", outerwear: "white feather trim cardigan angel" },
+            recommendedOutfit: [
+                { item: "White Satin Slip Dress", role: "Dress", styleTip: "Floor-length, bias cut, silk-feel." },
+                { item: "Feather-Trim White Cardigan", role: "Outerwear", styleTip: "Barely there, cropped." },
+                { item: "Gold Halo Headband", role: "Accessories", styleTip: "The whole point." },
+                { item: "White Platform Sandals", role: "Shoes", styleTip: "Strappy, minimal, ethereal." }
+            ]
+        },
+        {
+            category: "feminine",
+            keywords: ["sweet lolita","lolita","japanese lolita","petticoat","frilly","harajuku lolita","EGL","elegant gothic lolita","kawaii","pastel lolita"],
+            conceptName: "Sweet Lolita",
+            profileAnalysis: "Japanese Lolita fashion's softest expression: petticoat-filled skirts, elaborate headpieces, and a palette of ice cream pastels. A deliberate rejection of adult fashion norms.",
+            stylingRules: ["The petticoat must give maximum volume.", "Pastels only: mint, lavender, pink, white.", "Wristcuffs, bows, and a matching bag complete the coord."],
+            colorPalette: [{ name: "Pastel Lavender", hex: "#D4BBDD" }, { name: "Mint Cream", hex: "#C8EFDD" }, { name: "Petal Pink", hex: "#F7C5D5" }],
+            imageSearchTerms: { top: "sweet lolita blouse pastel frill japan", bottom: "petticoat lolita skirt japan fashion", shoes: "tea party shoes lolita japan", outerwear: "sweet lolita cardigan ruffle pastel" },
+            recommendedOutfit: [
+                { item: "Pastel Print JSK (Jumper Skirt)", role: "Dress", styleTip: "Over a white blouse with Peter Pan collar." },
+                { item: "Puffed Petticoat", role: "Bottom", styleTip: "Must fill out the skirt completely." },
+                { item: "Tea Party Shoes", role: "Shoes", styleTip: "Round toe, strap, matching colour." },
+                { item: "Bonnet or Giant Bow", role: "Accessories", styleTip: "Centre top of the head." }
+            ]
+        },
+
+        // ═══════════════ INTERNET AESTHETICS ═══════════════
+
+        {
+            category: "internet",
+            keywords: ["weirdcore","surreal","uncanny","distorted","dreamlike","internet horror","nostalgia","glitch","found footage","eerie"],
+            conceptName: "Weirdcore",
+            profileAnalysis: "Fashion for the uncanny valley. Mismatched patterns, childlike graphics on adult garments, and the visual language of a half-remembered dream that doesn't quite make sense on waking.",
+            stylingRules: ["Clash patterns deliberately — no accidents.", "Childlike elements (cartoon graphics, mismatched socks) on adult silhouettes.", "Muted, slightly desaturated palette with one unsettling pop colour."],
+            colorPalette: [{ name: "Muted Yellow", hex: "#D4C87A" }, { name: "Greyish Pink", hex: "#C4A8A8" }, { name: "Strange Blue", hex: "#7A94B8" }],
+            imageSearchTerms: { top: "weirdcore fashion clashing pattern art", bottom: "mismatched pattern trousers weird art", shoes: "cartoon chunky shoes weird aesthetic", outerwear: "strange graphic print jacket weird" },
+            recommendedOutfit: [
+                { item: "Mismatched Print Shirt", role: "Top", styleTip: "Two different patterns — worn unbuttoned over tee." },
+                { item: "Clashing Plaid Trousers", role: "Bottom", styleTip: "Different pattern than the shirt." },
+                { item: "Cartoon Character Socks", role: "Accessories", styleTip: "Pulled up high, fully visible." },
+                { item: "Chunky Platform Shoes", role: "Shoes", styleTip: "Like a child's drawing of adult shoes." }
+            ]
+        },
+        {
+            category: "internet",
+            keywords: ["dreamcore","pastel surrealism","cloud","dream","soft dreamlike","pastel weird","aesthetic tumblr","cottagecore surreal"],
+            conceptName: "Dreamcore",
+            profileAnalysis: "The aesthetic of being asleep and somewhere pleasant. Pastel skies, soft geometry, and the visual warmth of a half-remembered childhood place. Fashion that doesn't feel quite real.",
+            stylingRules: ["Soft pastels: sky blue, peach, lilac, soft yellow.", "Oversized and floaty shapes.", "Cloud prints, star motifs, or pastel rainbows welcome."],
+            colorPalette: [{ name: "Dream Sky", hex: "#B0C9E8" }, { name: "Pastel Peach", hex: "#FFDAB9" }, { name: "Soft Lilac", hex: "#C4ABCC" }],
+            imageSearchTerms: { top: "dreamcore pastel top cloud print soft", bottom: "pastel wide leg trousers dreamy", shoes: "platform cloud shoes pastel dreamy", outerwear: "oversized pastel cardigan dreamy" },
+            recommendedOutfit: [
+                { item: "Cloud-Print Oversized Tee", role: "Top", styleTip: "Soft cotton, pastel blue print." },
+                { item: "Pastel Wide-Leg Trousers", role: "Bottom", styleTip: "Matching or complementary pastel." },
+                { item: "Pastel Platform Shoes", role: "Shoes", styleTip: "Chunky sole, dreamy colourway." },
+                { item: "Oversized Pastel Cardigan", role: "Outerwear", styleTip: "Wrap it around yourself like a cloud." }
+            ]
+        },
+        {
+            category: "internet",
+            keywords: ["naturecore","forest bathing","moss","earth","anti-fashion","naturalist","botanical","green","fungal","fern"],
+            conceptName: "Naturecore",
+            profileAnalysis: "Not a fashion aesthetic but a rejection of fashion entirely. You dress the way the forest dresses — in layers, earthy tones, and textures that look like they've been grown, not bought.",
+            stylingRules: ["Natural fibres exclusively.", "Palette drawn from a walk in the woods.", "Layer textures — rough linen over soft cotton over worn fleece."],
+            colorPalette: [{ name: "Forest Green", hex: "#355E3B" }, { name: "Bark Brown", hex: "#7B4F2A" }, { name: "Lichen Grey", hex: "#8C9E8A" }],
+            imageSearchTerms: { top: "nature linen oversized earth tone top", bottom: "earth tone wide trousers natural fabric", shoes: "leather boot nature hiking earth", outerwear: "waxed cotton coat nature earth tone" },
+            recommendedOutfit: [
+                { item: "Oversized Linen Tunic", role: "Top", styleTip: "Earthy, slightly wrinkled on purpose." },
+                { item: "Wide-Leg Earth Tone Trousers", role: "Bottom", styleTip: "Hemp or linen, natural dye." },
+                { item: "Leather Work Boots", role: "Shoes", styleTip: "Already muddy when purchased, ideally." },
+                { item: "Waxed Cotton Parka", role: "Outerwear", styleTip: "Patched, worn, practical." }
+            ]
+        },
+        {
+            category: "internet",
+            keywords: ["goblincore","mushroom","found objects","dark earth","chaos","frogs","nature chaos","dark cottagecore","cave","toad"],
+            conceptName: "Goblincore",
+            profileAnalysis: "Cottagecore's messy, cave-dwelling sibling. Mushrooms, found objects, asymmetric silhouettes, and the philosophy that beauty lives in what others ignore. Chaos welcomed.",
+            stylingRules: ["Layer textures freely — nothing should match perfectly.", "Dark earthy palette: forest green, mud brown, rust, mushroom beige.", "Accessorise with actual nature finds — pressed flowers, bones, crystals."],
+            colorPalette: [{ name: "Mushroom", hex: "#A0896E" }, { name: "Moss Green", hex: "#4A5940" }, { name: "Rust", hex: "#8B3A2A" }],
+            imageSearchTerms: { top: "goblincore fashion mushroom dark cottagecore", bottom: "goblin aesthetic layered skirt dark earthy", shoes: "chunky boot dark goblin earthy", outerwear: "layered patchwork jacket goblincore" },
+            recommendedOutfit: [
+                { item: "Patchwork Layered Cardigan", role: "Outerwear", styleTip: "Every patch from a different fabric." },
+                { item: "Asymmetric Linen Top", role: "Top", styleTip: "Slightly too long on one side." },
+                { item: "Ruched Gathered Midi Skirt", role: "Bottom", styleTip: "Dark earth tone, slightly wrinkled." },
+                { item: "Chunky Dark Leather Boots", role: "Shoes", styleTip: "Mud acceptable." }
+            ]
+        },
+        {
+            category: "internet",
+            keywords: ["soft grunge","pastel grunge","pastel goth","kawaii dark","soft dark","pastel punk","grunge cute","alternakid"],
+            conceptName: "Soft Grunge",
+            profileAnalysis: "Pastel meets distressed. Leather meets lace. The impossibly cute teen bedroom with band posters and pink everything. Grunge energy filtered through Tumblr's rose-coloured lens.",
+            stylingRules: ["Contrast soft (pink, lavender) with rough (distressed, leather, fishnet).", "Band tees tucked into floral skirts is the core formula.", "Black doc martens under everything pastel."],
+            colorPalette: [{ name: "Washed Pink", hex: "#E8BFBF" }, { name: "Pale Lavender", hex: "#C7B8D8" }, { name: "Faded Black", hex: "#2E2E2E" }],
+            imageSearchTerms: { top: "soft grunge floral crop top pastel", bottom: "plaid mini skirt pastel grunge", shoes: "doc martens black pastel grunge outfit", outerwear: "oversized grunge flannel pastel" },
+            recommendedOutfit: [
+                { item: "Cropped Floral Lace Top", role: "Top", styleTip: "Over a fishnet layer." },
+                { item: "Pastel Plaid Mini Skirt", role: "Bottom", styleTip: "Pleated, hip-length." },
+                { item: "Black Doc Martens", role: "Shoes", styleTip: "The grounding element. Always." },
+                { item: "Oversized Printed Flannel", role: "Outerwear", styleTip: "Tied at the waist or draped." }
+            ]
+        },
+        {
+            category: "internet",
+            keywords: ["clowncore","jester","maximalist color","rainbow chaos","fun","circus","hyperpop","absurdist fashion","anti-serious"],
+            conceptName: "Clowncore",
+            profileAnalysis: "Anti-fashion taken to its most joyful extreme. Rainbow chaos, jester elements, polka dots on stripes on plaid, and the radical belief that fashion should be fun first, coherent never.",
+            stylingRules: ["More patterns = more correct.", "All colours simultaneously — restraint is the enemy.", "At least one circus-adjacent element (pom poms, ruffled collar, giant buttons)."],
+            colorPalette: [{ name: "Primary Red", hex: "#E8291C" }, { name: "Sunshine Yellow", hex: "#FFD700" }, { name: "Primary Blue", hex: "#1C4BE8" }],
+            imageSearchTerms: { top: "clowncore fashion colorful chaotic", bottom: "rainbow pattern clowncore fashion", shoes: "oversized colorful platform clown", outerwear: "rainbow checker jacket clowncore" },
+            recommendedOutfit: [
+                { item: "Polka Dot + Stripe Combined Shirt", role: "Top", styleTip: "Yes, both patterns at once." },
+                { item: "Rainbow Checker Trousers", role: "Bottom", styleTip: "Neither matches the top." },
+                { item: "Massive Platform Shoes", role: "Shoes", styleTip: "Colour-blocked, jester-toed." },
+                { item: "Giant Pom-Pom Collar", role: "Accessories", styleTip: "The piece that makes it." }
+            ]
+        },
+        {
+            category: "internet",
+            keywords: ["kidcore","primary colors","toys","childlike","nostalgia","colorblock","crayon","playful","childhood","cartoon"],
+            conceptName: "Kidcore",
+            profileAnalysis: "An unabashedly joyful return to childhood's visual language. Primary colours, cartoon characters, playful accessories, and fashion stripped back to its most uncomplicated, happiest form.",
+            stylingRules: ["Primary colours only: red, yellow, blue — or rainbow.", "Graphic tees must feature childhood characters, cartoons, or toys.", "Accessories should look like they came from a vending machine."],
+            colorPalette: [{ name: "Crayon Red", hex: "#E03030" }, { name: "Marker Yellow", hex: "#FFD333" }, { name: "Cobalt Blue", hex: "#1C52E0" }],
+            imageSearchTerms: { top: "kidcore cartoon tee colorful childhood", bottom: "colorful denim overalls kidcore", shoes: "colorblock sneakers kidcore playful", outerwear: "bright colorblock windbreaker kidcore" },
+            recommendedOutfit: [
+                { item: "Cartoon Character Graphic Tee", role: "Top", styleTip: "Size up for that authentic kids-tee energy." },
+                { item: "Colourful Denim Overalls", role: "Bottom", styleTip: "One strap undone." },
+                { item: "Colour-Block Chunky Sneakers", role: "Shoes", styleTip: "Velcro optional." },
+                { item: "Vending Machine Accessories", role: "Accessories", styleTip: "Rubber bracelets, plastic clips, everything." }
+            ]
+        },
+
+        // ═══════════════ CULTURAL / REGIONAL ═══════════════
+
+        {
+            category: "cultural",
+            keywords: ["harajuku","tokyo street","decora","jfashion","japanese street","wild layering","kawaii chaos","harajuku fashion walk"],
+            conceptName: "Harajuku Street",
+            profileAnalysis: "Tokyo's Harajuku district — the birthplace of fashion's most fearless experiments. Layers, colours, characters, and the most eclectic mix of every subculture simultaneously.",
+            stylingRules: ["Layer everything — 5+ distinct items visible.", "Mix at least 3 different fashion genres in one look.", "Accessories should be overwhelming — the more the better."],
+            colorPalette: [{ name: "Pop Yellow", hex: "#FFE500" }, { name: "Manga Pink", hex: "#FF6B9D" }, { name: "Ink Black", hex: "#0A0A0A" }],
+            imageSearchTerms: { top: "harajuku street fashion tokyo layers", bottom: "harajuku fashion bottom tokyo street", shoes: "platform shoes harajuku tokyo", outerwear: "harajuku layered fashion tokyo" },
+            recommendedOutfit: [
+                { item: "Layered Graphic Tee + Lace Blouse", role: "Top", styleTip: "Both at once, tucked in different ways." },
+                { item: "Mini Skirt over Fishnets over Trousers", role: "Bottom", styleTip: "Three layers of bottom, minimum." },
+                { item: "Platform Mary Janes", role: "Shoes", styleTip: "Brightly coloured, oversized bow." },
+                { item: "Loaded Accessory Stack", role: "Accessories", styleTip: "20+ clips, badges, charms — fill every surface." }
+            ]
+        },
+        {
+            category: "cultural",
+            keywords: ["ankara","afrofusion","african print","wax print","kente","african fashion","afro streetwear","nairobi","lagos fashion"],
+            conceptName: "Ankara Afrofusion",
+            profileAnalysis: "The bold geometric and floral wax-print patterns of West African Ankara fabric fused with modern silhouettes. Vibrant, pattern-driven, and deeply celebratory.",
+            stylingRules: ["Ankara print is always the star — minimal accessorising needed.", "Modern silhouettes: wrap dresses, wide-leg trousers, tailored suits.", "Complement with earthy metalwork jewellery."],
+            colorPalette: [{ name: "Kente Orange", hex: "#E07020" }, { name: "Deep Emerald", hex: "#1A5C3A" }, { name: "Warm Gold", hex: "#C8922A" }],
+            imageSearchTerms: { top: "ankara wax print top african fashion modern", bottom: "ankara wide leg trousers african print", shoes: "leather sandal gold african style", outerwear: "ankara blazer african fashion tailored" },
+            recommendedOutfit: [
+                { item: "Ankara Print Wrap Dress", role: "Dress", styleTip: "Bold geometric pattern, structured wrap." },
+                { item: "Ankara Tailored Blazer", role: "Outerwear", styleTip: "Full pattern, statement-coloured lining." },
+                { item: "Gold Leather Sandals", role: "Shoes", styleTip: "Block heel, metallic strap." },
+                { item: "Sculptural Gold Earrings", role: "Accessories", styleTip: "Large, architectural, traditional inspiration." }
+            ]
+        },
+        {
+            category: "cultural",
+            keywords: ["coastal grandmother","beach","linen","nancy meyers","breezy","nautical","seaside","hamptons","relaxed luxury","summer"],
+            conceptName: "Coastal Grandmother",
+            profileAnalysis: "You own a house near the water. You make effortless look expensive. Linen everywhere. An enormous hat. A dog. A perfectly imperfect life.",
+            stylingRules: ["Linen is your uniform fabric.", "Layer a chunky cotton cardigan over everything.", "Palette: white, cream, pale blue, sand, driftwood."],
+            colorPalette: [{ name: "Sea Salt", hex: "#F5F5F0" }, { name: "Sand Dollar", hex: "#E8DCC3" }, { name: "Denim Blue", hex: "#6A7FA8" }],
+            imageSearchTerms: { outerwear: "chunky cotton knit cardigan cream coastal", top: "linen button down shirt white oversized", bottom: "wide leg linen trousers white coastal", shoes: "espadrilles woven summer coastal" },
+            recommendedOutfit: [
+                { item: "Chunky Cream Knit Cardigan", role: "Outerwear", styleTip: "Worn open, draped over shoulders." },
+                { item: "Oversized Linen Button-Down", role: "Top", styleTip: "White, sleeves rolled, two buttons open." },
+                { item: "Wide-Leg Linen Trousers", role: "Bottom", styleTip: "Drawstring waist, flowing leg." },
+                { item: "Woven Espadrilles", role: "Shoes", styleTip: "Jute sole, canvas upper." }
+            ]
+        },
+        {
+            category: "cultural",
+            keywords: ["latin glam","telenovela","tropical","colombia fashion","bright colour","latin american","salsa","fiesta fashion"],
+            conceptName: "Latin Glam",
+            profileAnalysis: "The telenovela-energy, sun-kissed, tropical maximalism of Latin American fashion. Bold prints, warm skin-baring silhouettes, and the confidence that comes with dressing for a celebration every day.",
+            stylingRules: ["Bright is right — muted is not in the vocabulary.", "Show skin: shoulders, waist, legs — always something.", "One bold pattern + one solid colour maximum."],
+            colorPalette: [{ name: "Tropical Orange", hex: "#FF6B35" }, { name: "Magenta", hex: "#CC2B7A" }, { name: "Electric Yellow", hex: "#FFD700" }],
+            imageSearchTerms: { top: "latin fashion bright crop top tropical", bottom: "tropical print wrap skirt latin", shoes: "block heel sandal tropical latin", outerwear: "bright woven shawl latin fashion" },
+            recommendedOutfit: [
+                { item: "Off-Shoulder Tropical Print Top", role: "Top", styleTip: "Bold floral, bright base colour." },
+                { item: "High-Waisted Wrap Mini Skirt", role: "Bottom", styleTip: "Solid or complementary print." },
+                { item: "Block-Heel Strappy Sandals", role: "Shoes", styleTip: "Gold or vivid colour." },
+                { item: "Woven Rattan Bag", role: "Accessories", styleTip: "Round or half-moon shape." }
+            ]
+        },
+
+        // ═══════════════ VINTAGE ERAS ═══════════════
+
+        {
+            category: "vintage",
+            keywords: ["1950s","rockabilly","poodle skirt","petticoat","pin up","vintage 50s","grease","diner","retro 50s","swing skirt"],
+            conceptName: "1950s Rockabilly",
+            profileAnalysis: "The drive-in diner era rendered in polkadots and poodles. Full petticoated skirts, pedal pushers, winged eyeliner, and the electrifying energy of rock & roll filtered through a soda-pop lens.",
+            stylingRules: ["Full circle or swing skirt hits below the knee.", "Solid top with print bottom — or vice versa, never both.", "Victory rolls or a high ponytail complete the look."],
+            colorPalette: [{ name: "Cherry Red", hex: "#C41E3A" }, { name: "Poodle Pink", hex: "#F4A0B5" }, { name: "Cream White", hex: "#FFF8F0" }],
+            imageSearchTerms: { top: "1950s rockabilly top polka dot vintage", bottom: "poodle skirt petticoat 1950s vintage", shoes: "saddle shoe vintage 1950s ballet", outerwear: "vintage 1950s cardigan pinup" },
+            recommendedOutfit: [
+                { item: "Polka Dot Peplum Blouse", role: "Top", styleTip: "Tucked into the skirt, every time." },
+                { item: "Full Circle Swing Skirt", role: "Bottom", styleTip: "Supported by a stiff petticoat." },
+                { item: "White Ankle Socks + Saddle Shoes", role: "Shoes", styleTip: "Or red kitten heels." },
+                { item: "Belted Swing Cardigan", role: "Outerwear", styleTip: "Short, button-front, pastel." }
+            ]
+        },
+        {
+            category: "vintage",
+            keywords: ["1970s","boho","70s","fringe","flared","bell bottom","peace","hippie","earth 70s","bohemian 70s","suede","macrame"],
+            conceptName: "1970s Boho",
+            profileAnalysis: "The era of earthenware and easy movement. Fringed suede, flared denim, earth-tone crochet, and the political energy of a generation that dressed as though freedom was a textile.",
+            stylingRules: ["Flared denim is the base of every outfit.", "Layer fringed and crochet pieces over each other.", "Earth tones: burnt sienna, mustard, rust, olive."],
+            colorPalette: [{ name: "Burnt Sienna", hex: "#8C4A2F" }, { name: "Mustard", hex: "#C9A227" }, { name: "Olive", hex: "#6B7A2A" }],
+            imageSearchTerms: { top: "1970s boho crochet top flared", bottom: "bell bottom flared jeans 70s vintage", shoes: "platform wedge 70s vintage boho", outerwear: "fringed suede jacket 70s boho" },
+            recommendedOutfit: [
+                { item: "Fringed Suede Jacket", role: "Outerwear", styleTip: "Long fringe on sleeves and hem." },
+                { item: "Crochet Crop Top", role: "Top", styleTip: "Earthy tone, over a peasant blouse." },
+                { item: "High-Waisted Bell Bottoms", role: "Bottom", styleTip: "Extreme flare, earth-washed denim." },
+                { item: "Platform Wedge Sandals", role: "Shoes", styleTip: "Natural cork or woven jute." }
+            ]
+        },
+        {
+            category: "vintage",
+            keywords: ["1980s","80s","power dressing","shoulder pads","neon brights","bold print","madonna","big hair","80s pop"],
+            conceptName: "1980s Power",
+            profileAnalysis: "The decade that believed more was more. Power shoulders, neon excess, geometric patterns, and the absolute conviction that fashion should announce itself from across the room.",
+            stylingRules: ["Shoulders must be padded — slightly or excessively.", "Neon or bold geometric prints welcome — and expected.", "Metallics at every opportunity."],
+            colorPalette: [{ name: "Neon Fuchsia", hex: "#FF0090" }, { name: "Electric Blue", hex: "#0057FF" }, { name: "Gold Metallic", hex: "#D4AF37" }],
+            imageSearchTerms: { top: "1980s power dressing top shoulder pad", bottom: "high waist 80s power skirt", shoes: "metallic pump heels 80s vintage", outerwear: "oversized blazer shoulder pad 80s" },
+            recommendedOutfit: [
+                { item: "Power Blazer with Padded Shoulders", role: "Outerwear", styleTip: "Oversized, loud colour or bold check." },
+                { item: "High-Waisted Pencil Skirt", role: "Bottom", styleTip: "Or pleated wide-leg trousers." },
+                { item: "Metallic Pointed Pumps", role: "Shoes", styleTip: "High heel, shiny." },
+                { item: "Statement Belt", role: "Accessories", styleTip: "Wide, cinching the blazer at the waist." }
+            ]
+        },
+        {
+            category: "vintage",
+            keywords: ["1990s","grunge","90s grunge","flannel","torn tights","docs","kurt cobain","nirvana","grunge band","anti-fashion 90s"],
+            conceptName: "1990s Grunge",
+            profileAnalysis: "Seattle, 1991. The anti-fashion fashion movement. Flannel shirts, ripped tights, oversized everything, and the belief that effort was the enemy. Kurt Cobain never tried — that was the point.",
+            stylingRules: ["Flannel shirt tied at the waist is mandatory.", "Layer over a slogan or band tee.", "Dr. Martens or Converse — nothing else."],
+            colorPalette: [{ name: "Plaid Green", hex: "#4A7040" }, { name: "Faded Indigo", hex: "#4E5B8A" }, { name: "Dirty White", hex: "#DFDAD0" }],
+            imageSearchTerms: { top: "90s grunge flannel shirt band tee", bottom: "ripped denim jeans 90s grunge vintage", shoes: "doc martens boots 90s grunge", outerwear: "90s oversized plaid grunge" },
+            recommendedOutfit: [
+                { item: "Oversized Plaid Flannel", role: "Outerwear", styleTip: "Tied at the waist or off-shoulder." },
+                { item: "Worn Band Tee", role: "Top", styleTip: "Tucked in at the front only." },
+                { item: "High-Waisted Ripped Mom Jeans", role: "Bottom", styleTip: "Worn with tights underneath." },
+                { item: "Doc Martens 1460 Boots", role: "Shoes", styleTip: "Laced wrong, or not laced at all." }
+            ]
+        },
+        {
+            category: "vintage",
+            keywords: ["mod","1960s","space age","geometric","twiggy","op-art","shift dress","go-go boots","mini","swinging sixties"],
+            conceptName: "Mod / 1960s",
+            profileAnalysis: "London, 1965. Geometric prints, shift dresses, Twiggy lashes, and go-go boots. Mod is the future as imagined by the past — clean lines and Pop Art optimism.",
+            stylingRules: ["Shift dress or A-line mini skirt.", "Geometric or Op-Art prints: large circles, bold stripes.", "Go-go boots are non-negotiable."],
+            colorPalette: [{ name: "Pop White", hex: "#FFFFFF" }, { name: "Jet Black", hex: "#000000" }, { name: "Tangerine", hex: "#FF6A13" }],
+            imageSearchTerms: { top: "mod shift dress geometric 1960s vintage", bottom: "mod mini skirt op art pattern 60s", shoes: "go-go boots white 1960s vintage", outerwear: "mod coat white black geometric 60s" },
+            recommendedOutfit: [
+                { item: "Geometric Print Shift Dress", role: "Dress", styleTip: "Above the knee. Clean seaming." },
+                { item: "White Patent Go-Go Boots", role: "Shoes", styleTip: "To the knee, block heel or flat." },
+                { item: "Structured A-Line Coat", role: "Outerwear", styleTip: "Bold colour block — no prints on prints." },
+                { item: "Space-Age Disc Earrings", role: "Accessories", styleTip: "Large, geometric, plastic." }
+            ]
+        },
+        {
+            category: "vintage",
+            keywords: ["2010s tumblr","2010s aesthetic","galaxy print","band tee high waist","infinity scarf","pastel hair","flower crown","tumblr 2013"],
+            conceptName: "2010s Tumblr",
+            profileAnalysis: "The crystallised aesthetic of a specific internet era. Galaxy prints, pastel hair, flower crowns, and a very particular brand of effortful effortlessness that only existed between 2011 and 2015.",
+            stylingRules: ["High-waisted shorts over tights is the foundational formula.", "Galaxy print OR floral — both is too on-the-nose.", "Pastel hair or flower crown is the finishing touch."],
+            colorPalette: [{ name: "Galaxy Purple", hex: "#4A2069" }, { name: "Pastel Mint", hex: "#B5EAD7" }, { name: "Faded Denim", hex: "#8BB8D4" }],
+            imageSearchTerms: { top: "2010s tumblr aesthetic top vintage", bottom: "high waist shorts floral 2010s", shoes: "converse all star tumblr vintage", outerwear: "2010s tumblr galaxy print fashion" },
+            recommendedOutfit: [
+                { item: "Band or Galaxy Print Tee", role: "Top", styleTip: "Cropped or knotted at the front." },
+                { item: "High-Waisted Floral Shorts", role: "Bottom", styleTip: "Over opaque black tights." },
+                { item: "Worn Converse All Stars", role: "Shoes", styleTip: "Written on with sharpie." },
+                { item: "Flower Crown", role: "Accessories", styleTip: "Fresh, dried, or festival fake — all correct." }
+            ]
+        },
+
+        // ═══════════════ UTILITY / OUTDOORS ═══════════════
+
+        {
+            category: "utility",
+            keywords: ["gorpcore","technical","outdoor","hiking","arcteryx","salomon","fleece","gore-tex","trail","camping","mountain"],
+            conceptName: "Gorpcore",
+            profileAnalysis: "Gear meant for survival, worn as style. The fashion world's worship of Gore-Tex shells, trail-runners, and bouldering chalk bags carried as purses.",
+            stylingRules: ["Gore-Tex is non-negotiable.", "Layer fleece under a hard shell — always.", "Salomon, Patagonia, or Arc'teryx branding preferred."],
+            colorPalette: [{ name: "Forest Olive", hex: "#4B5320" }, { name: "Slate Grey", hex: "#708090" }, { name: "Safety Orange", hex: "#FF6700" }],
+            imageSearchTerms: { outerwear: "gore-tex hard shell jacket outdoor arcteryx", top: "technical fleece patagonia outdoor", bottom: "nylon cargo outdoor pants technical", shoes: "salomon trail runner hiking outdoor" },
+            recommendedOutfit: [
+                { item: "Arc'teryx Gore-Tex Shell", role: "Outerwear", styleTip: "Seam-sealed, pit-zip equipped." },
+                { item: "Patagonia R1 Fleece", role: "Top", styleTip: "Grid-knit technical layer." },
+                { item: "Nylon Cargo Trousers", role: "Bottom", styleTip: "Drawstring cuffs, multiple pockets." },
+                { item: "Salomon XT-6 Trail Runners", role: "Shoes", styleTip: "Lug sole, quick-lace system." }
+            ]
+        },
+        {
+            category: "utility",
+            keywords: ["workwear heritage","chore coat","selvedge","dickies","carpenter","raw denim","heritage work","wrangler","carhartt","work clothing"],
+            conceptName: "Workwear Heritage",
+            profileAnalysis: "American workwear DNA worn as culture. Carhartt wax canvas, Dickies chore coats, selvedge raw denim, and Red Wing boots — dressing as though every day is a day of honest work.",
+            stylingRules: ["Every piece should look like it could withstand actual labour.", "Raw or selvedge denim over stretch denim always.", "No branding that wasn't designed for working people."],
+            colorPalette: [{ name: "Duck Canvas", hex: "#C4A265" }, { name: "Workwear Indigo", hex: "#3A4F7A" }, { name: "Oxblood", hex: "#6B2737" }],
+            imageSearchTerms: { outerwear: "chore coat canvas workwear heritage", top: "workwear henley flannel heritage", bottom: "raw selvedge denim jeans heritage", shoes: "red wing boots heritage workwear" },
+            recommendedOutfit: [
+                { item: "Wax Canvas Chore Coat", role: "Outerwear", styleTip: "Brass buttons, chest pocket, aged patina." },
+                { item: "Flannel Workwear Shirt", role: "Top", styleTip: "Heavy cotton, worn open over henley." },
+                { item: "Raw Selvedge Denim", role: "Bottom", styleTip: "Cuffed once at the ankle." },
+                { item: "Red Wing Iron Ranger Boots", role: "Shoes", styleTip: "Oiled leather, stitched welt." }
+            ]
+        },
+        {
+            category: "utility",
+            keywords: ["cabincore","cabin","plaid","flannel hunting","rugged cozy","lodge","woodsman","forest cozy","warm utility"],
+            conceptName: "Cabincore",
+            profileAnalysis: "You live in a cabin. Or you wish you did. Plaid hunting vests, thick flannel, thermal layers, and the specific cozy-rugged energy of someone who owns an axe and knows how to use it.",
+            stylingRules: ["Thermal underlayer is the invisible foundation.", "Plaid flannel or hunting vest as the mid-layer.", "All footwear must be lace-up and capable of mud."],
+            colorPalette: [{ name: "Hunter Green", hex: "#3A5A40" }, { name: "Rust Plaid", hex: "#8B3A2A" }, { name: "Birch Cream", hex: "#F0EBE0" }],
+            imageSearchTerms: { outerwear: "hunting vest plaid flannel cabincore", top: "thermal henley cabin core layer", bottom: "dark wash denim jeans cabin rugged", shoes: "lace up boot waterproof cabin" },
+            recommendedOutfit: [
+                { item: "Quilted Hunting Vest", role: "Outerwear", styleTip: "Over the flannel, pockets filled." },
+                { item: "Heavy Plaid Flannel Shirt", role: "Top", styleTip: "Worn open over a thermal henley." },
+                { item: "Dark Wash Straight Denim", role: "Bottom", styleTip: "Slightly worn at the knees." },
+                { item: "Waterproof Lace-Up Boots", role: "Shoes", styleTip: "Insulated for -10°C minimum." }
+            ]
+        },
+        {
+            category: "utility",
+            keywords: ["sports luxe","athleisure","activewear","gym wear","sporty chic","lululemon","fitness fashion","yoga","seamless"],
+            conceptName: "Sports Luxe",
+            profileAnalysis: "The gym to everywhere pipeline. Premium activewear designed to perform aesthetically as well as functionally. Seamless leggings, cropped bras, fleece sets that cost a car payment.",
+            stylingRules: ["Monochrome activewear sets are the foundation.", "Layer oversized hoodies or track jackets.", "Footwear is always performance-inspired — clean and technical."],
+            colorPalette: [{ name: "Carbon Black", hex: "#1A1A1A" }, { name: "Sage Green", hex: "#7B8B6F" }, { name: "Dusty Mauve", hex: "#C4A8B0" }],
+            imageSearchTerms: { outerwear: "luxury track jacket athleisure", top: "seamless sports bra crop top premium", bottom: "high waist compression leggings sport", shoes: "clean white trainers running premium" },
+            recommendedOutfit: [
+                { item: "Monochrome Ribbed Bra Top", role: "Top", styleTip: "Seamless, sculptural fit." },
+                { item: "High-Waisted Compression Leggings", role: "Bottom", styleTip: "Matching set, pocket on hip." },
+                { item: "Oversized Half-Zip Fleece", role: "Outerwear", styleTip: "Worn open or zipped to mid-chest." },
+                { item: "Performance Running Sneakers", role: "Shoes", styleTip: "Clean colourway, premium brand." }
+            ]
+        },
+        {
+            category: "utility",
+            keywords: ["corporate siren","office fashion","power suit","corporate woman","business core","business wear","work fashion","boardroom"],
+            conceptName: "Corporate Siren",
+            profileAnalysis: "The boardroom as stage. Power suiting that barely disguises its aggression, siren-cut dresses under blazers, and the kind of minimal jewellery that costs more than someone's rent.",
+            stylingRules: ["Suit must be perfectly tailored — nothing off-the-peg.", "One siren element: a neckline, a slit, a fitted cut.", "Jewellery: one quality piece only."],
+            colorPalette: [{ name: "Corporate Navy", hex: "#1C2B5A" }, { name: "Power Cream", hex: "#F5F0E0" }, { name: "Slate", hex: "#6E7B8B" }],
+            imageSearchTerms: { outerwear: "corporate power blazer tailored woman", top: "siren office top fitted corporate woman", bottom: "tailored trouser high waist office", shoes: "pointed toe pump heels office woman" },
+            recommendedOutfit: [
+                { item: "Double-Breasted Power Blazer", role: "Outerwear", styleTip: "Perfectly tailored, single button." },
+                { item: "Fitted V-Neck Top", role: "Top", styleTip: "Barely there — the siren element." },
+                { item: "Wide-Leg Tailored Trousers", role: "Bottom", styleTip: "High waist, pressed crease." },
+                { item: "Pointed-Toe Kitten Heels", role: "Shoes", styleTip: "Nude or navy — no statement.Shoes." }
+            ]
+        },
+        {
+            category: "utility",
+            keywords: ["ski bunny","apres ski","mountain lodge","ski fashion","furry boot","turtleneck ski","chalet","winter luxury","snow fashion"],
+            conceptName: "Ski Bunny",
+            profileAnalysis: "The après-ski aesthetic is more important than the skiing itself. Furry boots, cashmere turtlenecks, matching ski sets in unexpected colours, and the warmth of someone who has already had two hot chocolates.",
+            stylingRules: ["Ski suit and après-ski wear must match in energy if not colour.", "Fur — real or faux — on something.", "Turtleneck under everything."],
+            colorPalette: [{ name: "Alpine Red", hex: "#C0392B" }, { name: "Snow White", hex: "#F5F5F5" }, { name: "Lodge Caramel", hex: "#C8935A" }],
+            imageSearchTerms: { outerwear: "ski suit colorful apres ski fashion", top: "turtleneck sweater ski lodge luxury", bottom: "ski trousers luxury lodge fashion", shoes: "furry ugg boot apres ski" },
+            recommendedOutfit: [
+                { item: "Coloured Ski Suit", role: "Outerwear", styleTip: "Bold colour, matching jacket + trousers." },
+                { item: "Cashmere Turtleneck", role: "Top", styleTip: "Underneath the ski jacket." },
+                { item: "Après-Ski Trousers", role: "Bottom", styleTip: "Flared or bootcut, tucked into boots." },
+                { item: "Faux Fur Snow Boots", role: "Shoes", styleTip: "White or caramel, impossibly fluffy." }
+            ]
+        },
+
+        // ═══════════════ MAXIMALIST ═══════════════
+
+        {
+            category: "maximalist",
+            keywords: ["maximalism","more is more","bold mix","pattern clash","jewel tones","excess","ornate","opulent","jewelled"],
+            conceptName: "Maximalism",
+            profileAnalysis: "The radical rejection of minimalism. Every surface a canvas, every layer an addition. Jewel-toned velvets over baroque prints over embroidered blouses — and yet it works.",
+            stylingRules: ["If it feels like too much, add more.", "Jewel tones: sapphire, emerald, burgundy, amethyst.", "Each piece should be a statement independently."],
+            colorPalette: [{ name: "Sapphire", hex: "#0F52BA" }, { name: "Emerald", hex: "#008000" }, { name: "Amethyst", hex: "#9B59B6" }],
+            imageSearchTerms: { top: "maximalist fashion bold pattern jewel tone", bottom: "maximalist pattern skirt jewel tones", shoes: "embellished heel maximalist fashion", outerwear: "velvet baroque jacket maximalist" },
+            recommendedOutfit: [
+                { item: "Baroque-Print Velvet Blazer", role: "Outerwear", styleTip: "The more ornate the better." },
+                { item: "Embroidered Statement Top", role: "Top", styleTip: "Pattern clashes with blazer — that's correct." },
+                { item: "Wide-Leg Jewel-Tone Trousers", role: "Bottom", styleTip: "Third colour, no clashes are mistakes." },
+                { item: "Embellished Block-Heel Boots", role: "Shoes", styleTip: "Crystals, embroidery, excess." }
+            ]
+        },
+        {
+            category: "maximalist",
+            keywords: ["boho","free spirit","bohemian","festival","fringe","layered necklace","maxi dress","hippie chic","Coachella","free people"],
+            conceptName: "Boho / Free Spirit",
+            profileAnalysis: "Nomadic luxury filtered through festival energy. Layered necklaces, maxi dresses, fringed anything, and the spiritual commitment to looking like you just returned from somewhere interesting.",
+            stylingRules: ["Layer necklaces — minimum three, maximum unlimited.", "Maxi dress or wide-leg trousers as the base.", "Fringe on at least one item."],
+            colorPalette: [{ name: "Terracotta", hex: "#A0522D" }, { name: "Dusty Teal", hex: "#4E8098" }, { name: "Cream", hex: "#F8F4ED" }],
+            imageSearchTerms: { top: "boho peasant blouse free spirit festival", bottom: "maxi skirt boho festival fashion", shoes: "gladiator sandal boho festival", outerwear: "fringed kimono boho fashion" },
+            recommendedOutfit: [
+                { item: "Embroidered Peasant Blouse", role: "Top", styleTip: "Off-shoulder or wide neck." },
+                { item: "Tiered Maxi Skirt", role: "Bottom", styleTip: "Earthy palette, layered tiers." },
+                { item: "Fringed Kimono", role: "Outerwear", styleTip: "Draped, not buttoned." },
+                { item: "Leather Gladiator Sandals", role: "Shoes", styleTip: "Wrap up the calf." }
+            ]
+        },
+        {
+            category: "maximalist",
+            keywords: ["avant-garde","deconstructed","conceptual","experimental","issey miyake","comme des garcons","rei kawakubo","structural fashion","art fashion"],
+            conceptName: "Avant-Garde",
+            profileAnalysis: "Fashion as sculpture. Comme des Garçons' bumps, Issey Miyake's pleats, Maison Margiela's deconstruction. Clothing that asks 'what is a garment?' and refuses the obvious answer.",
+            stylingRules: ["The garment itself is the concept — no other statement needed.", "Proportion and silhouette are the tools, not colour.", "A single avant-garde piece needs a near-invisible base."],
+            colorPalette: [{ name: "Architectural White", hex: "#FAFAFA" }, { name: "Concept Black", hex: "#0A0A0A" }, { name: "One Pop", hex: "#E74C3C" }],
+            imageSearchTerms: { top: "avant garde fashion conceptual deconstructed", bottom: "structural trousers avant garde fashion", shoes: "tabi boot margiela avant garde", outerwear: "deconstructed jacket avant garde fashion" },
+            recommendedOutfit: [
+                { item: "Deconstructed Asymmetric Jacket", role: "Outerwear", styleTip: "One sleeve, raw edges, deliberate unfinish." },
+                { item: "Pleated Structural Top", role: "Top", styleTip: "Geometric pleating, architectural fold." },
+                { item: "Wide Draped Trousers", role: "Bottom", styleTip: "Volume at the hip, tapered to nothing." },
+                { item: "Maison Margiela Tabi Boots", role: "Shoes", styleTip: "The split-toe. Essential." }
+            ]
+        },
+        {
+            category: "maximalist",
+            keywords: ["e-girl","e-boy","egirl","eboy","tiktok fashion","alt tiktok","egirl makeup","chain","heart clip","striped sleeve"],
+            conceptName: "E-Girl / E-Boy",
+            profileAnalysis: "Born in the TikTok era. E-girl mixes egirl makeup (blush nose), anime references, Y2K hardware, and BDSM-lite aesthetics in one scrollable feed-optimised look.",
+            stylingRules: ["Layered necklaces — chains, crosses, hearts.", "Striped long-sleeve under any graphic tee.", "Platform shoes and plaid skirt are the signature combo."],
+            colorPalette: [{ name: "E-Black", hex: "#1A1A1A" }, { name: "Cherry Red", hex: "#CC1122" }, { name: "Heart Pink", hex: "#F48FB1" }],
+            imageSearchTerms: { top: "egirl fashion striped sleeve graphic tee", bottom: "plaid mini skirt egirl", shoes: "platform chunky shoe egirl", outerwear: "egirl oversized hoodie chain aesthetic" },
+            recommendedOutfit: [
+                { item: "Striped Long-Sleeve Under Graphic Tee", role: "Top", styleTip: "Anime graphic preferred." },
+                { item: "Plaid Mini Skirt", role: "Bottom", styleTip: "With black bike shorts underneath." },
+                { item: "Platform Black Boots", role: "Shoes", styleTip: "Chunky, chunky, chunky." },
+                { item: "Layer of Chains + Heart Clips", role: "Accessories", styleTip: "At least 4 necklace layers." }
+            ]
+        },
+        {
+            category: "maximalist",
+            keywords: ["indie sleaze","indie","american apparel","terry richardson","vice","2007","party look","flash photography","indie cool"],
+            conceptName: "Indie Sleaze",
+            profileAnalysis: "The messy, hungover, flash-photography-lit aesthetic of the late 2000s indie scene. American Apparel, Vice magazine, and the specific dishevellment of someone who goes to a lot of shows.",
+            stylingRules: ["Everything looks slightly slept in — intentionally.", "Neon or metallic exactly where you'd expect muted.", "An ironic graphic tee is mandatory."],
+            colorPalette: [{ name: "Flash White", hex: "#F0EFEC" }, { name: "Neon Yellow", hex: "#F0E040" }, { name: "Indie Black", hex: "#1E1E1E" }],
+            imageSearchTerms: { top: "indie sleaze fashion 2007 vintage aesthetic", bottom: "high waist shorts tights indie sleaze", shoes: "flat ankle boot indie sleaze vintage", outerwear: "oversized blazer indie sleaze american apparel" },
+            recommendedOutfit: [
+                { item: "Ironic Graphic Tee", role: "Top", styleTip: "Tucked into the shorts, one side." },
+                { item: "High-Waisted Shorts over Tights", role: "Bottom", styleTip: "Opaque black tights always." },
+                { item: "Flat Buckle Ankle Boots", role: "Shoes", styleTip: "Scuffed, not cleaned." },
+                { item: "Oversized Blazer", role: "Outerwear", styleTip: "Men's blazer from a charity shop." }
+            ]
+        },
+        {
+            category: "maximalist",
+            keywords: ["rave","festival","sequin","body paint","net top","led","neon rave","festival fashion","burning man","edc","coachella rave"],
+            conceptName: "Rave / Festival",
+            profileAnalysis: "The dance floor is your runway. Everything must catch the light, reflect the lasers, and survive 8 hours of movement. Sequins, body paint, net tops, and the kind of accessorising that makes airport security interesting.",
+            stylingRules: ["Reflective or sequined as the base — lasers need a surface.", "Comfort is non-negotiable: you will be standing for 10 hours.", "Layer net or mesh as a coverup — it goes over everything."],
+            colorPalette: [{ name: "Laser Blue", hex: "#00BFFF" }, { name: "UV Pink", hex: "#FF00A8" }, { name: "Holographic", hex: "#C0C0FF" }],
+            imageSearchTerms: { top: "rave festival sequin top holographic", bottom: "festival shorts rave holographic", shoes: "rave platform boot festival", outerwear: "net mesh festival coverup rave" },
+            recommendedOutfit: [
+                { item: "Holographic Sequin Bralette", role: "Top", styleTip: "Or full sequin bodysuit." },
+                { item: "Iridescent Booty Shorts", role: "Bottom", styleTip: "High waist, comfortable to dance." },
+                { item: "Chunky Platform Boots", role: "Shoes", styleTip: "Extra height = extra visibility in the crowd." },
+                { item: "Butterfly Net Cape", role: "Outerwear", styleTip: "Worn as coverup during the walk to the venue." }
+            ]
+        }
+    ];
+
+    // ================================================================
+    // UTILITY FUNCTIONS
+    // ================================================================
+
+    let currentStudioMode = 'text';
+
+    function getItemImageUrl(styleData, item, index) {
+        const roleLower = item.role.toLowerCase();
+        const termMap = styleData.imageSearchTerms || {};
+        const term = termMap[roleLower]
+            || termMap['top']
+            || (item.item + ' ' + styleData.conceptName + ' fashion');
+        const seed = encodeURIComponent(term);
+        return `https://source.unsplash.com/featured/300x400/?${seed}&sig=${index}`;
+    }
+
+    function getGoogleSearchUrl(item, styleName) {
+        const q = encodeURIComponent(item.item + ' ' + styleName + ' fashion outfit');
+        return `https://www.google.com/search?tbm=isch&q=${q}`;
+    }
+
+    // ── Smart matching engine
+    function findBestMatch(prompt) {
+        const lowerPrompt = prompt.toLowerCase();
+        const words = lowerPrompt.split(/\s+/);
+        let bestMatch = null, highestScore = -1;
+
+        for (const preset of fashionDatabase) {
+            let score = 0;
+            for (const keyword of preset.keywords) {
+                if (lowerPrompt.includes(keyword)) {
+                    score += keyword.split(' ').length * 3;
+                } else {
+                    for (const word of words) {
+                        if (word.length > 3 && keyword.includes(word)) score += 1;
+                    }
+                }
+            }
+            if (score > highestScore) { highestScore = score; bestMatch = preset; }
+        }
+        return bestMatch || fashionDatabase[0];
+    }
+
+    // ── Studio modes
+    function setStudioMode(mode) {
+        currentStudioMode = mode;
+        const textBtn = document.getElementById('mode-text-btn');
+        const visionBtn = document.getElementById('mode-vision-btn');
+        const textPanel = document.getElementById('panel-mode-text');
+        const visionPanel = document.getElementById('panel-mode-vision');
+
+        if (mode === 'text') {
+            textBtn.classList.add('active');
+            visionBtn.classList.remove('active');
+            textPanel.classList.remove('hidden');
+            visionPanel.classList.add('hidden');
+        } else {
+            visionBtn.classList.add('active');
+            textBtn.classList.remove('active');
+            textPanel.classList.add('hidden');
+            visionPanel.classList.remove('hidden');
+        }
+    }
+
+    function setQuickPrompt(text) {
+        document.getElementById('style-prompt-input').value = text;
+    }
+
+    function handleImageFileSelect(e) {
+        const file = e.target.files[0];
+        if (file) processAndPreviewImage(file);
+    }
+
+    const dropZone = document.getElementById('drag-drop-zone');
+    dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('bg-white'); });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('bg-white'));
+    dropZone.addEventListener('drop', e => {
+        e.preventDefault(); dropZone.classList.remove('bg-white');
+        const file = e.dataTransfer.files[0];
+        if (file && file.type.startsWith('image/')) processAndPreviewImage(file);
+    });
+    dropZone.addEventListener('click', () => document.getElementById('image-file-input').click());
+
+    function processAndPreviewImage(file) {
+        const reader = new FileReader();
+        reader.onload = e => {
+            document.getElementById('image-preview').src = e.target.result;
+            document.getElementById('image-preview-container').classList.remove('hidden');
+            document.getElementById('upload-placeholder').classList.add('hidden');
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function clearUploadedImage(event) {
+        event.stopPropagation();
+        document.getElementById('image-file-input').value = '';
+        document.getElementById('image-preview-container').classList.add('hidden');
+        document.getElementById('upload-placeholder').classList.remove('hidden');
+    }
+
+    // ── GENERATE TRIGGER
+    function triggerStylingEngine() {
+        const btn = document.getElementById('generate-style-btn');
+        const btnText = document.getElementById('btn-text');
+        const loadingContainer = document.getElementById('ai-loading-container');
+        const barFill = document.getElementById('loading-bar-fill');
+        const statusText = document.getElementById('loading-status-text');
+
+        const textPrompt = document.getElementById('style-prompt-input').value.trim();
+        const hasImage = !document.getElementById('image-preview-container').classList.contains('hidden');
+        const gender = document.getElementById('gender-toggle').value;
+
+        if (currentStudioMode === 'text' && !textPrompt) { alert('Please describe a fashion vibe first.'); return; }
+        if (currentStudioMode === 'vision' && !hasImage) { alert('Please upload an image first.'); return; }
+
+        btn.disabled = true;
+        btnText.innerText = 'Finding your style...';
+        loadingContainer.classList.remove('hidden');
+        gsap.to(barFill, { width: '40%', duration: 0.5 });
+        statusText.innerText = 'Scanning 70+ aesthetics...';
+
+        setTimeout(() => {
+            gsap.to(barFill, { width: '80%', duration: 0.5 });
+            statusText.innerText = 'Matching aesthetic geometry...';
+
+            setTimeout(() => {
+                gsap.to(barFill, { width: '100%', duration: 0.2 });
+                statusText.innerText = 'Done.';
+
+                let resultData;
+                if (currentStudioMode === 'text') {
+                    resultData = findBestMatch(textPrompt);
+                } else {
+                    resultData = fashionDatabase[Math.floor(Math.random() * fashionDatabase.length)];
+                }
+
+                renderStylingReport(resultData, gender);
+
+                btn.disabled = false;
+                btnText.innerText = 'Generate Another';
+                setTimeout(() => {
+                    loadingContainer.classList.add('hidden');
+                    gsap.set(barFill, { width: '0%' });
+                }, 600);
+            }, 1000);
+        }, 700);
+    }
+
+    // ── RENDER REPORT
+    function renderStylingReport(data, gender) {
+        document.getElementById('results-empty-state').classList.add('hidden');
+        const filledState = document.getElementById('results-filled-state');
+        filledState.classList.remove('hidden');
+
+        document.getElementById('result-concept-title').innerText = data.conceptName;
+        document.getElementById('result-analysis-text').innerText = data.profileAnalysis;
+
+        const rulesList = document.getElementById('result-rules-list');
+        rulesList.innerHTML = '';
+        data.stylingRules.forEach(rule => {
+            rulesList.innerHTML += `
+                <li class="flex items-start gap-2 text-sm text-taupe leading-relaxed" style="font-weight:300;">
+                    <span class="text-craftRed font-bold mt-0.5 flex-shrink-0">›</span>
+                    <span>${rule}</span>
+                </li>
+            `;
+        });
+
+        const paletteGrid = document.getElementById('result-palette-grid');
+        paletteGrid.innerHTML = '';
+        data.colorPalette.forEach(color => {
+            paletteGrid.innerHTML += `
+                <div class="flex items-center gap-3 group cursor-pointer">
+                    <div class="w-8 h-8 rounded border-2 border-dashed border-craftRed/20 group-hover:scale-110 transition-transform flex-shrink-0" style="background:${color.hex};"></div>
+                    <div>
+                        <span class="text-xs font-bold uppercase tracking-wider text-warmBrown block" style="letter-spacing:0.1em;">${color.name}</span>
+                        <span class="text-xs text-taupe font-mono group-hover:text-craftRed transition-colors">${color.hex}</span>
+                    </div>
+                </div>
+            `;
+        });
+
+        const itemsGrid = document.getElementById('result-items-grid');
+        itemsGrid.innerHTML = '';
+        data.recommendedOutfit.forEach((item, i) => {
+            const imageUrl = getItemImageUrl(data, item, i);
+            const googleUrl = getGoogleSearchUrl(item, data.conceptName);
+            const skelId = `skel-${data.conceptName.replace(/\s+/g,'-')}-${i}`;
+
+            itemsGrid.innerHTML += `
+                <div class="result-outfit-card">
+                    <div class="w-16 h-20 bg-linen rounded overflow-hidden flex-shrink-0 relative border-2 border-dashed border-craftRed/20 group/img">
+                        <div id="${skelId}" class="absolute inset-0 flex items-center justify-center shimmer z-10">
+                            <span class="font-script text-craftRed text-lg">${item.role[0]}</span>
+                        </div>
+                        <img
+                            src="${imageUrl}"
+                            alt="${item.item}"
+                            class="w-full h-full object-cover absolute inset-0 opacity-0 transition-opacity duration-500 z-20"
+                            onload="this.style.opacity='1'; var sk=document.getElementById('${skelId}'); if(sk) sk.style.display='none';"
+                            onerror="this.src='https://source.unsplash.com/featured/300x400/?fashion,clothing,${encodeURIComponent(item.role)}';"
+                        >
+                        <a href="${googleUrl}" target="_blank" rel="noopener"
+                           class="absolute inset-0 z-30 bg-warmBrown/70 flex flex-col items-center justify-center opacity-0 group-hover/img:opacity-100 transition-opacity no-underline">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white mb-0.5" viewBox="0 0 24 24" fill="currentColor"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                            <span class="text-white text-[8px] font-bold uppercase tracking-wider">Search</span>
+                        </a>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <span class="text-xs font-bold uppercase tracking-wider text-craftRed block mb-0.5" style="letter-spacing:0.12em;">${item.role}</span>
+                        <h4 class="font-sans font-bold text-warmBrown text-sm mb-1 leading-tight">${item.item}</h4>
+                        <p class="text-xs text-taupe leading-relaxed" style="font-weight:300;">${item.styleTip}</p>
+                        <a href="${googleUrl}" target="_blank" rel="noopener"
+                           class="inline-flex items-center gap-1 mt-1.5 text-xs font-bold text-craftRed hover:underline no-underline">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" viewBox="0 0 24 24" fill="currentColor"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                            Search Images
+                        </a>
+                    </div>
+                </div>
+            `;
+        });
+
+        gsap.fromTo('#results-filled-state > *',
+            { opacity: 0, y: 20 },
+            { opacity: 1, y: 0, duration: 0.6, stagger: 0.1, ease: 'power2.out', overwrite: true }
+        );
+
+        if (window.innerWidth < 1024) {
+            filledState.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }
+
+    // ── BROWSE GRID
+    function buildBrowseGrid(category) {
+        const grid = document.getElementById('style-browse-grid');
+        grid.innerHTML = '';
+        const filtered = category === 'all'
+            ? fashionDatabase
+            : fashionDatabase.filter(s => s.category === category);
+
+        filtered.forEach(style => {
+            const card = document.createElement('div');
+            card.className = 'stitch-card p-4 cursor-pointer flex flex-col gap-1';
+            card.innerHTML = `
+                <span class="text-[9px] font-bold uppercase tracking-widest text-craftRed/70" style="letter-spacing:0.15em;">${style.category}</span>
+                <h3 class="font-sans font-bold text-warmBrown text-sm leading-tight">${style.conceptName}</h3>
+                <p class="text-xs text-taupe line-clamp-2 leading-relaxed" style="font-weight:300;">${style.profileAnalysis}</p>
+                <button class="mt-2 craft-btn-outline text-[9px] px-3 py-1.5" style="font-size:0.65rem;" onclick="event.stopPropagation(); loadStyleToStudio('${style.conceptName}')">Load →</button>
+            `;
+            card.addEventListener('click', () => loadStyleToStudio(style.conceptName));
+            grid.appendChild(card);
+        });
+
+        // Stagger animation
+        gsap.fromTo('#style-browse-grid > *',
+            { opacity: 0, y: 15 },
+            { opacity: 1, y: 0, duration: 0.4, stagger: 0.04, ease: 'power2.out' }
+        );
+    }
+
+    function filterByCategory(el, cat) {
+        document.querySelectorAll('#category-filter-bar .cat-tag').forEach(b => b.classList.remove('active'));
+        el.classList.add('active');
+        buildBrowseGrid(cat);
+    }
+
+    function loadStyleToStudio(conceptName) {
+        const style = fashionDatabase.find(s => s.conceptName === conceptName);
+        if (!style) return;
+        document.getElementById('style-prompt-input').value = style.keywords[0];
+        setStudioMode('text');
+        document.getElementById('studio').scrollIntoView({ behavior: 'smooth' });
+        setTimeout(() => renderStylingReport(style, document.getElementById('gender-toggle').value), 400);
+    }
+
+    // ── ENCYCLOPEDIA
+    function initEncyclopedia() {
+        const container = document.getElementById('encyclopedia-tags');
+        fashionDatabase.forEach((style, index) => {
+            const btn = document.createElement('button');
+            btn.className = 'cat-tag mb-1';
+            btn.innerText = style.conceptName;
+            btn.onclick = () => openEncyclopediaDetail(index);
+            container.appendChild(btn);
+        });
+    }
+
+    function openEncyclopediaDetail(index) {
+        const data = fashionDatabase[index];
+        const defEl = document.getElementById('encyclopedia-default');
+        const detailEl = document.getElementById('encyclopedia-detail');
+
+        document.getElementById('encyclopedia-title').innerText = data.conceptName;
+        document.getElementById('encyclopedia-analysis').innerText = data.profileAnalysis;
+
+        document.getElementById('encyclopedia-load-btn').onclick = () => {
+            loadStyleToStudio(data.conceptName);
+        };
+
+        defEl.style.opacity = '0';
+        defEl.style.pointerEvents = 'none';
+        detailEl.style.opacity = '1';
+        detailEl.style.pointerEvents = 'all';
+        gsap.fromTo(detailEl, { scale: 0.97, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.35, ease: 'back.out(1.5)' });
+    }
+
+    function closeEncyclopediaDetail() {
+        const defEl = document.getElementById('encyclopedia-default');
+        const detailEl = document.getElementById('encyclopedia-detail');
+        detailEl.style.opacity = '0';
+        detailEl.style.pointerEvents = 'none';
+        defEl.style.opacity = '1';
+        defEl.style.pointerEvents = 'all';
+    }
+
+    // ── GSAP INIT
+    document.addEventListener('DOMContentLoaded', () => {
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Custom Cursor Animation
+        const cursor = document.getElementById('custom-cursor');
+        const scissorTop = document.getElementById('scissor-top');
+        const scissorBottom = document.getElementById('scissor-bottom');
+
+        gsap.set(scissorTop, { rotation: -15, transformOrigin: "16px 16px" });
+        gsap.set(scissorBottom, { rotation: 15, transformOrigin: "16px 16px" });
+
+        document.addEventListener('mousemove', (e) => {
+            gsap.set(cursor, { x: e.clientX - 4, y: e.clientY - 4 });
+        });
+
+        document.addEventListener('mousedown', () => {
+            gsap.to(scissorTop, { rotation: 0, duration: 0.1, ease: 'power2.out' });
+            gsap.to(scissorBottom, { rotation: 0, duration: 0.1, ease: 'power2.out' });
+        });
+
+        document.addEventListener('mouseup', () => {
+            gsap.to(scissorTop, { rotation: -15, duration: 0.15, ease: 'power2.out' });
+            gsap.to(scissorBottom, { rotation: 15, duration: 0.15, ease: 'power2.out' });
+        });
+
+        initEncyclopedia();
+        buildBrowseGrid('all');
+
+        // Nav scroll effect
+        ScrollTrigger.create({
+            start: 'top -60',
+            onEnter: () => document.getElementById('site-nav').style.boxShadow = '0 4px 20px rgba(44,36,23,0.08)',
+            onLeaveBack: () => document.getElementById('site-nav').style.boxShadow = 'none',
+        });
+
+        // Hero title animation
+        const heroTitle = new SplitType('#hero-title', { types: 'chars' });
+        gsap.set(heroTitle.chars, { opacity: 0, y: 30, rotate: -3 });
+        gsap.to(heroTitle.chars, { opacity: 1, y: 0, rotate: 0, duration: 0.8, stagger: 0.04, ease: 'back.out(1.7)', delay: 0.2 });
+
+        // Hero content appearing animation
+        const heroOtherElements = document.querySelectorAll('.hero-content-group > *:not(#hero-title)');
+        gsap.set(heroOtherElements, { opacity: 0, y: 20 });
+        gsap.to(heroOtherElements, { 
+            opacity: 1, 
+            y: 0, 
+            duration: 0.8, 
+            stagger: 0.1, 
+            ease: 'power3.out', 
+            delay: 0.7 
+        });
+
+        // Sketch floats - Appear, Continuous, Parallax
+        const sketches = document.querySelectorAll('.sketch-float');
+        gsap.set(sketches, { opacity: 0, scale: 0.5 });
+        gsap.to(sketches, {
+            opacity: 1,
+            scale: 1,
+            duration: 1,
+            stagger: 0.1,
+            ease: 'back.out(1.5)',
+            delay: 0.4
+        });
+
+        sketches.forEach((el, i) => {
+            const svg = el.querySelector('svg');
+            if (svg) {
+                gsap.to(svg, {
+                    y: i % 2 === 0 ? '-=15' : '+=15',
+                    x: i % 3 === 0 ? '+=8' : '-=8',
+                    rotate: i % 2 === 0 ? '+=4' : '-=4',
+                    duration: 3 + (i % 3),
+                    repeat: -1,
+                    yoyo: true,
+                    ease: 'sine.inOut',
+                    delay: 1.5
+                });
+            }
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            const x = (e.clientX / window.innerWidth - 0.5) * 2;
+            const y = (e.clientY / window.innerHeight - 0.5) * 2;
+            
+            sketches.forEach((el, i) => {
+                const depth = (i % 3 + 1) * 15;
+                gsap.to(el, {
+                    x: -x * depth,
+                    y: -y * depth,
+                    duration: 1.5,
+                    ease: 'power2.out',
+                    overwrite: 'auto'
+                });
+            });
+        });
+
+        // Interactive 3D Tilt for cards
+        const interactiveCards = document.querySelectorAll('.stitch-card');
+        interactiveCards.forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                gsap.to(card, { y: -4, duration: 0.3, ease: 'power2.out' });
+            });
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                const rotateX = ((y - centerY) / centerY) * -2;
+                const rotateY = ((x - centerX) / centerX) * 2;
+                
+                gsap.to(card, {
+                    rotateX: rotateX,
+                    rotateY: rotateY,
+                    transformPerspective: 1000,
+                    duration: 0.4,
+                    ease: 'power2.out'
+                });
+            });
+            card.addEventListener('mouseleave', () => {
+                gsap.to(card, {
+                    y: 0,
+                    rotateX: 0,
+                    rotateY: 0,
+                    duration: 0.6,
+                    ease: 'power2.out'
+                });
+            });
+        });
+
+        // Magnetic Buttons
+        document.querySelectorAll('.craft-btn, .craft-btn-outline').forEach(btn => {
+            btn.addEventListener('mousemove', (e) => {
+                const rect = btn.getBoundingClientRect();
+                const x = (e.clientX - rect.left - rect.width / 2) * 0.4;
+                const y = (e.clientY - rect.top - rect.height / 2) * 0.4;
+                gsap.to(btn, { x: x, y: y, duration: 0.3, ease: 'power2.out' });
+            });
+            btn.addEventListener('mouseleave', () => {
+                gsap.to(btn, { x: 0, y: 0, duration: 0.5, ease: 'elastic.out(1, 0.3)' });
+            });
+        });
+
+        // Reveal sections
+        document.querySelectorAll('section').forEach(section => {
+            gsap.fromTo(section.querySelectorAll('.stitch-card, p'),
+                { opacity: 0, y: 40 },
+                {
+                    opacity: 1, y: 0, duration: 0.8, stagger: 0.1, ease: 'power2.out',
+                    scrollTrigger: { trigger: section, start: 'top 80%', once: true }
+                }
+            );
+        });
+
+        // ── ADVANCED TYPOGRAPHY REVEALS
+        document.querySelectorAll('section h2').forEach((header) => {
+            const split = new SplitType(header, { types: 'chars, words' });
+            gsap.from(split.chars, {
+                scrollTrigger: {
+                    trigger: header,
+                    start: 'top 85%'
+                },
+                opacity: 0,
+                y: 30,
+                rotateX: -90,
+                stagger: 0.02,
+                duration: 0.8,
+                ease: 'back.out(2)'
+            });
+        });
+
+        // ── SCROLL PROGRESS THREAD
+        gsap.to('#scroll-thread-fill', {
+            height: '100%',
+            ease: 'none',
+            scrollTrigger: {
+                trigger: document.body,
+                start: 'top top',
+                end: 'bottom bottom',
+                scrub: 0.1
+            }
+        });
+
+        // ── DYNAMIC CURSOR REACTION TO SCROLL
+        let isScrolling;
+        window.addEventListener('scroll', () => {
+            if (!isScrolling) {
+                gsap.to(scissorTop, { rotation: 20, duration: 0.15, yoyo: true, repeat: -1 });
+                gsap.to(scissorBottom, { rotation: -20, duration: 0.15, yoyo: true, repeat: -1 });
+            }
+            window.clearTimeout(isScrolling);
+            isScrolling = setTimeout(() => {
+                isScrolling = false;
+                gsap.killTweensOf(scissorTop);
+                gsap.killTweensOf(scissorBottom);
+                gsap.to(scissorTop, { rotation: -15, duration: 0.2 });
+                gsap.to(scissorBottom, { rotation: 15, duration: 0.2 });
+            }, 100);
+        });
+
+        // ── MAGNETIC NAV LINKS
+        document.querySelectorAll('#site-nav a').forEach(link => {
+            link.addEventListener('mousemove', (e) => {
+                const rect = link.getBoundingClientRect();
+                const x = (e.clientX - rect.left - rect.width / 2) * 0.3;
+                const y = (e.clientY - rect.top - rect.height / 2) * 0.3;
+                gsap.to(link, { x: x, y: y, duration: 0.3, ease: 'power2.out' });
+            });
+            link.addEventListener('mouseleave', () => {
+                gsap.to(link, { x: 0, y: 0, duration: 0.5, ease: 'elastic.out(1, 0.3)' });
+            });
+        });
+
+        // ── PARALLAX SCROLL DEPTH
+        document.querySelectorAll('.sketch-float').forEach((sketch, index) => {
+            const speed = (index % 2 === 0 ? 50 : -50) * (Math.random() * 0.5 + 0.5);
+            gsap.to(sketch, {
+                yPercent: speed,
+                ease: 'none',
+                scrollTrigger: {
+                    trigger: sketch.closest('section') || sketch.parentElement,
+                    start: 'top bottom',
+                    end: 'bottom top',
+                    scrub: true
+                }
+            });
+        });
+
+        // ── RIPPLE / PRESS EFFECTS ON BUTTONS
+        document.querySelectorAll('.craft-btn').forEach(btn => {
+            btn.addEventListener('mousedown', () => {
+                gsap.to(btn, { scale: 0.93, duration: 0.1, ease: 'power1.inOut' });
+                gsap.fromTo(btn, 
+                    { boxShadow: '0 0 0 0 rgba(192,57,43,0.5)' },
+                    { boxShadow: '0 0 0 20px rgba(192,57,43,0)', duration: 0.4, ease: 'power2.out' }
+                );
+            });
+            btn.addEventListener('mouseup', () => {
+                gsap.to(btn, { scale: 1, duration: 0.2, ease: 'back.out(2)' });
+            });
+            btn.addEventListener('mouseleave', () => {
+                gsap.to(btn, { scale: 1, duration: 0.2, ease: 'back.out(2)' });
+            });
+        });
+
+        // ── HERO SCISSOR SNIP ANIMATION
+        const giantScissors = document.getElementById('giant-scissors');
+        const giantTop = document.getElementById('giant-scissor-top');
+        const giantBottom = document.getElementById('giant-scissor-bottom');
+
+        if (giantScissors) {
+            const heroSnipTl = gsap.timeline({
+                scrollTrigger: {
+                    trigger: "#hero-section",
+                    start: "bottom 95%", 
+                    end: "bottom 30%",   
+                    scrub: 0.5
+                }
+            });
+
+            heroSnipTl.fromTo(giantScissors, 
+                { left: "-150px" }, 
+                { left: "110vw", ease: "none", duration: 1 }, 
+                0
+            );
+
+            for(let i=0; i<10; i++) {
+                heroSnipTl.to(giantTop, { rotation: 25, duration: 0.05, ease: "power1.inOut" }, i*0.1);
+                heroSnipTl.to(giantTop, { rotation: 0, duration: 0.05, ease: "power1.inOut" }, i*0.1 + 0.05);
+                
+                heroSnipTl.to(giantBottom, { rotation: -25, duration: 0.05, ease: "power1.inOut" }, i*0.1);
+                heroSnipTl.to(giantBottom, { rotation: 0, duration: 0.05, ease: "power1.inOut" }, i*0.1 + 0.05);
+            }
+        }
+
+        // ── INTERACTIVE STITCH DIVIDERS
+        const stitchDividers = document.querySelectorAll('.stitch-divider');
+        stitchDividers.forEach(divider => {
+            let cutInterval;
+            let bgPos = 0;
+            divider.addEventListener('mouseenter', () => {
+                divider.classList.add('cut-active');
+                gsap.to(scissorTop, { rotation: 25, duration: 0.1, yoyo: true, repeat: -1 });
+                gsap.to(scissorBottom, { rotation: -25, duration: 0.1, yoyo: true, repeat: -1 });
+                
+                cutInterval = setInterval(() => {
+                    bgPos += 14;
+                    divider.style.backgroundPosition = `${bgPos}px 0`;
+                }, 50);
+            });
+            divider.addEventListener('mouseleave', () => {
+                divider.classList.remove('cut-active');
+                gsap.killTweensOf(scissorTop);
+                gsap.killTweensOf(scissorBottom);
+                gsap.to(scissorTop, { rotation: -15, duration: 0.15 });
+                gsap.to(scissorBottom, { rotation: 15, duration: 0.15 });
+                clearInterval(cutInterval);
+            });
+        });
+    });
+    </script>
+</body>
+</html>
